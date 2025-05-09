@@ -1,0 +1,29 @@
+# Node modules
+node_modules/
+
+# Builds y dist
+dist/
+.next/
+
+# Archivos de entorno
+.env
+.env.local
+.env.*.local
+
+# Archivos de Prisma generados
+prisma/dev.db
+prisma/dev.db-journal
+
+# Archivos de logs
+*.log
+
+# Archivos temporales de sistemas operativos
+.DS_Store
+Thumbs.db
+
+# Carpeta de imágenes subidas (pero no su estructura)
+uploads/*
+!uploads/.gitkeep
+
+# Otros
+coverage/

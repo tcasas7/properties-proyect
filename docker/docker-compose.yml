@@ -1,0 +1,37 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:15
+    container_name: propiedades_postgres
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: propiedades_user
+      POSTGRES_PASSWORD: propiedades_pass
+      POSTGRES_DB: propiedades_db
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  backend:
+    image: propiedades-backend
+    build:
+      context: ../apps/backend
+    ports:
+      - "4000:4000"
+    environment:
+      DATABASE_URL: postgres://propiedades_user:propiedades_pass@postgres:5432/propiedades_db
+    depends_on:
+      - postgres
+
+  frontend:
+    image: propiedades-frontend
+    build:
+      context: ../apps/frontend
+    ports:
+      - "3000:3000"
+    environment:
+      NEXT_PUBLIC_BACKEND_URL: http://backend:4000
+
+volumes:
+  postgres_data:
