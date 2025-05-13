@@ -11,9 +11,11 @@ model Property {
   id        Int      @id @default(autoincrement())
   title     String
   location  String
+  country   String
   images    String[]
   available Boolean  @default(true)
   price     Float 
+  description String     @default("")
   calendar  Calendar[]
 }
 

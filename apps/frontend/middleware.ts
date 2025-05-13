@@ -6,13 +6,13 @@ export function middleware(request: NextRequest) {
 
   // Solo protegé /admin excepto /admin/login
   if (pathname.startsWith('/admin') && !pathname.startsWith('/admin/login')) {
-    const token = request.cookies.get('token')?.value || null;
+    const token = request.cookies.get('token')?.value;
 
-    if (!token && typeof window === 'undefined') {
-      const loginUrl = new URL('/admin/login', request.url);
-      return NextResponse.redirect(loginUrl);
-    }
+  if (!token) {
+    const loginUrl = new URL('/admin/login', request.url);
+    return NextResponse.redirect(loginUrl);
   }
+}
 
   return NextResponse.next();
 }

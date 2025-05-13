@@ -16,5 +16,13 @@ export class CreatePropertyDto {
 
   @IsNumber()
   price: number;
+
+  @IsString()
+  @IsOptional()
+  description?: string;
+
+  @IsString()
+  country: string;
+
 }
 

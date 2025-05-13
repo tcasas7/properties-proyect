@@ -3,8 +3,10 @@ import {
   Post,
   Get,
   Param,
+  Put,
   Delete,
   Body,
+  Patch,
   ParseIntPipe,
   UseGuards,
   HttpException,
@@ -34,41 +36,84 @@ export class PropertiesController {
       },
     }),
   }))
+
   async create(
     @Body() body: any,
     @UploadedFiles() files: { images?: Express.Multer.File[] },
   ) {
-    try {
-      const imagePaths = files.images?.map(file => `/uploads/${file.filename}`) || [];
+    const imagePaths = files.images?.map(file => `/uploads/${file.filename}`) || [];
+    const propertyData = {
+      title: body.title,
+      location: body.location,
+      price: parseFloat(body.price),
+      description: body.description ?? '',
+      country: body.country, 
+      images: imagePaths,
+      available: true,
+    };
+    return this.propertiesService.create(propertyData);
+  }
 
-      const propertyData = {
-        title: body.title,
-        location: body.location,
-        price: parseFloat(body.price),
-        images: imagePaths,
-        available: true,
-      };
+  @Patch(':id/replace-image/:index')
+  @UseGuards(JwtAuthGuard)
+  @UseInterceptors(FileFieldsInterceptor([{ name: 'image', maxCount: 1 }], {
+    storage: diskStorage({
+      destination: './uploads',
+      filename: (req, file, cb) => {
+        const unique = Date.now() + '-' + Math.round(Math.random() * 1e9);
+        cb(null, unique + extname(file.originalname));
+      },
+    }),
+  }))
 
-      return await this.propertiesService.create(propertyData);
-    } catch (error) {
-      console.error('Error al crear propiedad:', error);
-      throw new HttpException('No se pudo crear la propiedad', HttpStatus.BAD_REQUEST);
-    }
+  async replaceImage(
+    @Param('id', ParseIntPipe) id: number,
+    @Param('index', ParseIntPipe) index: number,
+    @UploadedFiles() files: { image?: Express.Multer.File[] },
+  ) {
+    const imagePath = `/uploads/${files.image?.[0].filename}`;
+    return this.propertiesService.replaceImage(id, index, imagePath);
+  }
+
+  @Patch(':id/add-images')
+  @UseGuards(JwtAuthGuard)
+  @UseInterceptors(FileFieldsInterceptor([{ name: 'images', maxCount: 10 }], {
+    storage: diskStorage({
+      destination: './uploads',
+      filename: (req, file, cb) => {
+        const unique = Date.now() + '-' + Math.round(Math.random() * 1e9);
+        cb(null, unique + extname(file.originalname));
+      },
+    }),
+  }))
+  async addImages(
+    @Param('id', ParseIntPipe) id: number,
+    @UploadedFiles() files: { images?: Express.Multer.File[] },
+  ) {
+    const paths = files.images?.map(file => `/uploads/${file.filename}`) || [];
+    return this.propertiesService.addImages(id, paths);
+  }
+
+  
+  @Put(':id')
+  @UseGuards(JwtAuthGuard)
+  async update(@Param('id', ParseIntPipe) id: number, @Body() body: any) {
+    return this.propertiesService.update(id, body);
   }
 
   @Get()
   async findAll() {
-    return await this.propertiesService.findAll();
+    return this.propertiesService.findAll();
   }
 
   @Get(':id')
   async findOne(@Param('id', ParseIntPipe) id: number) {
-    return await this.propertiesService.findOne(id);
+    return this.propertiesService.findOne(id);
   }
 
   @Delete(':id')
   @UseGuards(JwtAuthGuard)
   async remove(@Param('id', ParseIntPipe) id: number) {
-    return await this.propertiesService.remove(id);
+    return this.propertiesService.remove(id);
   }
 }
