@@ -1,6 +1,7 @@
 export type Property = {
     id: number;
     title: string;
+    subtitle: string;
     location: string;
     country: string;
     images: string[];

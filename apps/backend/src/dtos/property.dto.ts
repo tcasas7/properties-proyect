@@ -4,6 +4,10 @@ export class CreatePropertyDto {
   @IsString()
   title: string;
 
+  @IsOptional()
+  @IsString()
+  subtitle?: string;
+
   @IsString()
   location: string;
 

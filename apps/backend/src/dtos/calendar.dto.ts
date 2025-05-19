@@ -1,4 +1,4 @@
-import { IsDateString, IsBoolean, IsInt } from 'class-validator';
+import { IsDateString, IsInt } from 'class-validator';
 
 export class CreateCalendarDto {
   @IsInt()
@@ -6,7 +6,4 @@ export class CreateCalendarDto {
 
   @IsDateString()
   date: string;
-
-  @IsBoolean()
-  available: boolean;
 }

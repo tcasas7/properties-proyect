@@ -10,6 +10,7 @@ export class PropertiesService {
     return this.prisma.property.create({
       data: {
         title: data.title,
+        subtitle: data.subtitle ?? "",
         location: data.location,
         images: data.images,
         price: data.price,
@@ -25,6 +26,7 @@ export class PropertiesService {
     where: { id },
     data: {
       title: data.title,
+      subtitle: data.subtitle ?? "",
       location: data.location,
       price: data.price,
       description: data.description ?? "",

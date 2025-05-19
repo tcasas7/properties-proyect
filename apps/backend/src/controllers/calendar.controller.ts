@@ -25,7 +25,7 @@ export class CalendarController {
   }
 
   @Delete(':id')
-  remove(@Param('id', ParseIntPipe) id: number) {
+  remove(@Param('id') id: string) {
     return this.calendarService.remove(id);
   }
 }

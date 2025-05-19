@@ -10,6 +10,7 @@ datasource db {
 model Property {
   id        Int      @id @default(autoincrement())
   title     String
+  subtitle    String?
   location  String
   country   String
   images    String[]
@@ -17,19 +18,36 @@ model Property {
   price     Float 
   description String     @default("")
   calendar  Calendar[]
+  bookings Booking[]
+
 }
 
 model Calendar {
-  id          Int      @id @default(autoincrement())
-  propertyId  Int
+  id          String   @id @default(uuid())
   date        DateTime
-  available   Boolean
-
+  propertyId  Int
   property    Property @relation(fields: [propertyId], references: [id])
+  createdAt   DateTime @default(now())
+
+  @@unique([date, propertyId]) 
 }
+
 
 model User {
   id       Int     @id @default(autoincrement())
   email    String  @unique
   password String
+}
+
+model Booking {
+  id          String    @id @default(uuid())
+  propertyId  Int
+  property    Property  @relation(fields: [propertyId], references: [id])
+  startDate   DateTime
+  endDate     DateTime
+  totalPrice  Float
+  name        String
+  email       String
+  phone       String
+  createdAt   DateTime  @default(now())
 }

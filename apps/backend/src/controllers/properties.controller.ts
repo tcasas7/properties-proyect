@@ -20,6 +20,8 @@ import { JwtAuthGuard } from 'src/common/guards/jwt-auth.guar';
 import { diskStorage } from 'multer';
 import { extname } from 'path';
 import { Express } from 'express';
+import { CreateCalendarDto } from 'src/dtos/calendar.dto';
+
 
 @Controller('properties')
 export class PropertiesController {
@@ -44,8 +46,9 @@ export class PropertiesController {
     const imagePaths = files.images?.map(file => `/uploads/${file.filename}`) || [];
     const propertyData = {
       title: body.title,
+      subtitle: body.subtitle ?? '',
       location: body.location,
-      price: parseFloat(body.price),
+       price: Number(body.price),
       description: body.description ?? '',
       country: body.country, 
       images: imagePaths,

@@ -7,6 +7,8 @@ import type { Property } from '../../../../../../shared/types/property';
 import toast from 'react-hot-toast';
 import { useRef } from 'react';
 import { useRouter } from 'next/navigation';
+import CalendarManager from '@/components/CalendarManager'; 
+
 
 
 class FileListProxy {
@@ -25,6 +27,7 @@ export default function Dashboard() {
   const [properties, setProperties] = useState<Property[]>([]);
   const [form, setForm] = useState({
     title: '',
+    subtitle: '',
     location: '',
     price: 0,
     description: '',
@@ -62,11 +65,13 @@ export default function Dashboard() {
       [name]: name === 'price' ? Number(value) : value,
     }));
   };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
     const formData = new FormData();
     formData.append('title', form.title);
+    formData.append('subtitle', form.subtitle);
     formData.append('location', form.location);
     formData.append('price', String(form.price));
     formData.append('description', form.description);
@@ -82,7 +87,7 @@ export default function Dashboard() {
     try {
       await api.post('/properties', formData);
       toast.success('Propiedad creada con éxito');
-      setForm({ title: '', location: '', price: 0, description: '', country: '' });
+      setForm({ title: '', subtitle: '', location: '', price: 0, description: '', country: '' });
       setFiles(null);
       fetchProperties();
     } catch (err) {
@@ -111,7 +116,15 @@ export default function Dashboard() {
       {/* Formulario de creación */}
       <form onSubmit={handleSubmit} className="space-y-4 bg-white p-4 rounded shadow">
         <input name="title" value={form.title} onChange={handleChange} placeholder="Título" className="w-full p-2 border rounded" required />
-        
+        <input
+          name="subtitle"
+          value={form.subtitle}
+          onChange={handleChange}
+          placeholder="Subtítulo (ej: ideal para parejas, 3 personas)"
+          className="w-full p-2 border rounded"
+        />
+
+
         {/*<input name="location" value={form.location} onChange={handleChange} placeholder="Ubicación" className="w-full p-2 border rounded" required />*/}
         <input name="price" type="number" value={form.price} onChange={handleChange} placeholder="Precio" className="w-full p-2 border rounded" required />
         <textarea name="description" value={form.description} onChange={handleChange} placeholder="Descripción" className="w-full p-2 border rounded" rows={4} />
@@ -155,7 +168,14 @@ export default function Dashboard() {
               {editingId === p.id ? (
                 <div className="space-y-2 w-full">
                   <input name="title" value={editForm.title} onChange={handleEditChange} className="w-full p-1 border rounded" />
-                  <input name="location" value={editForm.location} onChange={handleEditChange} className="w-full p-1 border rounded" />
+                  <input
+                    name="subtitle"
+                    value={editForm.subtitle ?? ""}
+                    onChange={handleEditChange}
+                    placeholder="Subtítulo (ej: ideal para parejas, 3 personas)"
+                    className="w-full p-1 border rounded"
+                  />
+
                   <input name="price" type="number" value={editForm.price} onChange={handleEditChange} className="w-full p-1 border rounded" />
                   <textarea name="description" value={editForm.description} onChange={handleEditChange} className="w-full p-1 border rounded" rows={3} />
                   <input
@@ -187,7 +207,9 @@ export default function Dashboard() {
                     <button onClick={async () => {
                       try {
                         toast.loading('Actualizando...');
-                        await api.put(`/properties/${p.id}`, editForm);
+                            await api.put(`/properties/${p.id}`, {
+                          ...editForm,
+                          subtitle: editForm.subtitle ?? "",});
                         toast.dismiss();
                         toast.success('Propiedad actualizada');
                         setEditingId(null);
@@ -203,10 +225,24 @@ export default function Dashboard() {
               ) : (
                 <div>
                   <h3 className="font-semibold">{p.title}</h3>
-                  <p>{p.location}</p>
+                  {p.subtitle && (
+                    <p className="text-sm italic text-gray-500">{p.subtitle}</p>
+                  )}
                   <p className="text-sm text-gray-600">{p.description}</p>
                   <span className="text-sm text-gray-600">${p.price}</span>
-                  <button onClick={() => { setEditingId(p.id); setEditForm(p); }} className="mt-2 block text-blue-600 text-sm bg-blue-100 px-3 py-1 rounded hover:bg-blue-200">Editar</button>
+                  <button
+                    onClick={() => {
+                      setEditingId(p.id);
+                      setEditForm({
+                        ...p,
+                        subtitle: p.subtitle ?? "",
+                      });
+                    }}
+                    className="mt-2 block text-blue-600 text-sm bg-blue-100 px-3 py-1 rounded hover:bg-blue-200"
+                    >
+                     Editar
+                  </button>
+
                 </div>
               )}
 
@@ -265,6 +301,7 @@ export default function Dashboard() {
                 </div>
               ))}
             </div>
+            <CalendarManager propertyId={p.id} />
           </div>
         ))}
       </div>

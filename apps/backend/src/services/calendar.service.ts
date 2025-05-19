@@ -19,7 +19,7 @@ export class CalendarService {
     });
   }
 
-  async remove(id: number) {
+  async remove(id: string) {
     return this.prisma.calendar.delete({
       where: { id },
     });
