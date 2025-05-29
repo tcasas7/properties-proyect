@@ -58,39 +58,33 @@ export default function PropertyPage() {
   const handleBooking = () => {
     if (!startDate || !endDate) return;
     const url = `https://wa.me/5492233005228?text=${encodeURIComponent(
-      `Hola! 👋 Quiero reservar:
-
- Propiedad: ${property.title}
-Ubicación: ${property.location}
- Desde: ${startDate.toLocaleDateString()}
-Hasta: ${endDate.toLocaleDateString()}
-Total (${totalNights} noches): $${totalPrice}`
+      `Hola! 👋 Quiero reservar:\n\nPropiedad: ${property.title}\nUbicación: ${property.location}\nDesde: ${startDate.toLocaleDateString()}\nHasta: ${endDate.toLocaleDateString()}\nTotal (${totalNights} noches): $${totalPrice}`
     )}`;
     window.open(url, "_blank");
   };
 
   return (
-    <div className="min-h-screen bg-white text-gray-800">
-      <header className="sticky top-0 z-40 bg-white border-b shadow-sm px-4 py-3 flex items-center gap-4">
-        <button onClick={() => router.push("/")} className="text-blue-600 hover:text-blue-800">
-          <ArrowLeft size={24} />
-        </button>
-        <span className="text-sm font-medium text-gray-700">Volver</span>
-      </header>
+    <div className="min-h-screen flex flex-col bg-[#FFF1F2] text-[#4A7150]">
+    <header className="sticky top-0 z-50 bg-[url('/images/pastel.jpg')] bg-cover border-b shadow-sm px-4 py-4 flex items-center gap-4">
+      <button onClick={() => router.push("/")} className="text-[#4A7150]-600 hover:text-pink-700">
+        <ArrowLeft size={24} />
+      </button>
+      <span className="text-sm font-medium text-[#4A7150]">Volver</span>
+    </header>
 
-      <main className="container mx-auto px-4 py-12 space-y-10">
-        <div className="mb-10">
-          <h1 className="text-3xl font-bold text-gray-800">{property.title}</h1>
-          <p className="text-sm text-gray-500 mt-1">
+      <main className="max-w-screen-xl mx-auto px-4 py-10 space-y-10">
+        <div className="mb-8">
+          <h1 className="text-4xl font-bold text-[#4A7150] mb-1">{property.title}</h1>
+          <p className="text-sm text-gray-500">
             {property.location}
-            {property.subtitle ? `  ${property.subtitle}` : ""}
+            {property.subtitle ? ` - ${property.subtitle}` : ""}
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
-          <div className="md:col-span-2">
+        <div className="grid grid-cols-1 md:grid-cols-3s gap-8">
+          <div className="md:col-span-2 space-y-4">
             <div
-              className="aspect-video rounded-2xl overflow-hidden shadow-md cursor-pointer"
+              className="aspect-video rounded-2xl overflow-hidden shadow-lg cursor-pointer"
               onClick={() => {
                 setSelectedIndex(0);
                 setGalleryOpen(true);
@@ -106,7 +100,7 @@ Total (${totalNights} noches): $${totalPrice}`
             </div>
 
             {property.images.length > 1 && (
-              <div className="mt-4 flex gap-2 flex-wrap">
+              <div className="flex gap-2 flex-wrap">
                 {property.images.map((img, i) => (
                   <Image
                     key={i}
@@ -125,12 +119,12 @@ Total (${totalNights} noches): $${totalPrice}`
             )}
           </div>
 
-          <div className="flex flex-col justify-between space-y-6 p-4 border rounded-xl shadow-sm bg-gray-50">
+          <div className="flex flex-col justify-between space-y-6 p-6 bg-white rounded-2xl shadow-md border">
             <div>
-              <p className="text-gray-600 mb-4 whitespace-pre-line">
-                {property.description}
-              </p>
-              <p className="text-xl font-semibold text-blue-700 mb-4">
+   <p className="text-lg leading-relaxed mb-6 whitespace-pre-line">
+      {property.description}
+    </p>
+              <p className="text-2x1 font-semibold text-pink-600 mb-4">
                 ${property.price} / noche
               </p>
 
@@ -153,8 +147,8 @@ Total (${totalNights} noches): $${totalPrice}`
 
                 {startDate && endDate && (
                   <div className="text-sm mt-2 text-gray-700">
-                    {totalNights} noche(s) · Total: 
-                    <span className="font-semibold text-blue-700"> ${totalPrice} USD</span>
+                    {totalNights} noche(s) · Total:
+                    <span className="font-semibold text-pink-600"> ${totalPrice} USD</span>
                   </div>
                 )}
               </div>
@@ -163,7 +157,7 @@ Total (${totalNights} noches): $${totalPrice}`
             <Button
               disabled={!startDate || !endDate}
               onClick={handleBooking}
-              className="bg-blue-600 hover:bg-blue-700 disabled:bg-gray-300 disabled:cursor-not-allowed text-white w-full py-3 text-lg rounded-xl"
+              className="bg-pink-600 hover:bg-pink-700 disabled:bg-gray-300 disabled:cursor-not-allowed text-white w-full py-3 text-lg rounded-xl"
             >
               Reservar vía WhatsApp
             </Button>

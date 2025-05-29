@@ -11,18 +11,16 @@ export function Header() {
   };
 
   return (
-    <header className="bg-white shadow-md sticky top-0 z-50">
-      <div className="container mx-auto px-4 py-4 flex items-center justify-between">
-        {/* Logo */}
-        <Link href="/" className="text-2xl font-bold text-blue-700">
+    <header className="sticky top-0 z-50 bg-[#fdcae1]/80 backdrop-blur-md shadow">
+      <div className="backdrop-brightness-110 backdrop-blur-sm w-full px-4 md:px-12 py-4 flex items-center justify-between">
+        <Link href="/" className="hover:text-[#3c5945]">
           PremiumStays
         </Link>
-
         {/* Navegación */}
-        <nav className="hidden md:flex items-center gap-6 text-sm font-medium text-gray-700">
-          <a href="#about" className="hover:text-blue-600 transition">Sobre Nosotros</a>
-          <a href="#contact" className="hover:text-blue-600 transition">Contacto</a>
-          <button onClick={switchLanguage} className="hover:text-blue-600 transition">
+        <nav className="hidden md:flex items-center gap-8 text-sm font-medium text-[#4A7150]">
+          <a href="#about" className="hover:underline hover:text-[#3a624e] transition">Sobre Nosotros</a>
+          <a href="#contact" className="hover:underline hover:text-[#3a624e] transition">Contacto</a>
+          <button onClick={switchLanguage} className="hover:underline hover:text-[#3a624e] transition">
             {locale === "es" ? "EN" : "ES"}
           </button>
         </nav>
