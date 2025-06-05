@@ -24,4 +24,26 @@ export class CalendarService {
       where: { id },
     });
   }
+
+async removeByDate(propertyId: number, date: string) {
+  const record = await this.prisma.calendar.findFirst({
+    where: {
+      propertyId,
+      date: {
+        gte: new Date(`${date}T00:00:00.000Z`),
+        lt: new Date(`${date}T23:59:59.999Z`),
+      },
+    },
+  });
+
+  if (!record) {
+    throw new Error('Registro no encontrado');
+  }
+
+  return this.prisma.calendar.delete({
+    where: { id: record.id },
+  });
+}
+
+
 }

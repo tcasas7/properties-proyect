@@ -25,7 +25,17 @@ export class CalendarController {
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
+  remove(
+    @Param('id') id: string) {
     return this.calendarService.remove(id);
   }
+
+  @Delete(':propertyId/:date')
+  removeByDate(
+  @Param('propertyId', ParseIntPipe) propertyId: number,
+  @Param('date') date: string
+) {
+  return this.calendarService.removeByDate(propertyId, date);
+}
+
 }

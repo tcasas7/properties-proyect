@@ -1,21 +1,22 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { useState, useEffect } from 'react';
-import Calendar from 'react-calendar';
-import 'react-calendar/dist/Calendar.css';
+import { DayPicker } from 'react-day-picker';
+import 'react-day-picker/dist/style.css';
 import api from '@/lib/api';
 import type { Calendar as CalendarType } from '../../../../shared/types/calendar';
 
 interface Props {
   propertyId: number;
-  pricePerNight?: number; // si querés usarlo para cálculo
+  pricePerNight?: number;
 }
 
 export default function CalendarManager({ propertyId, pricePerNight }: Props) {
   const [dates, setDates] = useState<CalendarType[]>([]);
-  const [range, setRange] = useState<[Date, Date] | null>(null);
+  const [selection, setSelection] = useState<{ from?: Date; to?: Date }>({});
+  const [isUnblockMode, setIsUnblockMode] = useState(false);
 
   useEffect(() => {
     fetchDates();
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const fetchDates = async () => {
@@ -27,65 +28,121 @@ export default function CalendarManager({ propertyId, pricePerNight }: Props) {
     }
   };
 
-  const handleRangeSelection = (value: Date | [Date | null, Date | null] | null) => {
-    if (Array.isArray(value) && value[0] && value[1]) {
-      const [start, end] = value;
-      const nights = Math.ceil((end.getTime() - start.getTime()) / (1000 * 60 * 60 * 24)) + 1;
-      const price = pricePerNight ? nights * pricePerNight : null;
-      const confirm = window.confirm(
-        `¿Confirmas bloquear ${nights} noche(s) del ${start.toDateString()} al ${end.toDateString()}${price ? ` por un total de $${price}` : ''}?`
-      );
-      if (confirm) {
-        blockRange(start, end);
-        setRange(null);
-      }
-    } else {
-      setRange(null);
-    }
-  };
+  const applyDateRange = async (start: Date, end: Date, isUnblock: boolean) => {
+    let from = new Date(start.getFullYear(), start.getMonth(), start.getDate());
+    let to = new Date(end.getFullYear(), end.getMonth(), end.getDate());
+    if (from > to) [from, to] = [to, from];
 
-  const blockRange = async (start: Date, end: Date) => {
-    const current = new Date(start);
-    while (current <= end) {
-      try {
-        const iso = current.toISOString();
-        const exists = dates.some(
-          (d) => new Date(d.date).toDateString() === current.toDateString()
-        );
-        if (!exists) {
-          const res = await api.post<CalendarType>('/calendar', {
-            propertyId,
-            date: iso,
-          });
-          setDates((prev) => [...prev, res.data]);
+    const current = new Date(from);
+    while (current <= to) {
+      const localDate = new Date(current.getFullYear(), current.getMonth(), current.getDate());
+      const isoDate = localDate.toISOString().split('T')[0];
+
+      if (isUnblock) {
+        try {
+          const exists = dates.find(
+            (d) => new Date(d.date).toDateString() === localDate.toDateString()
+          );
+          if (exists) {
+            await api.delete(`/calendar/${propertyId}/${isoDate}`);
+            setDates((prev) =>
+              prev.filter((d) => {
+                const dbDate = new Date(d.date).toISOString().split('T')[0];
+                return dbDate !== isoDate;
+              })
+            );
+          }
+        } catch (err) {
+          console.error('Error desbloqueando fecha:', err);
         }
-      } catch (err) {
-        console.error('Error bloqueando fecha:', err);
+      } else {
+        try {
+          const exists = dates.some(
+            (d) => new Date(d.date).toDateString() === localDate.toDateString()
+          );
+          if (!exists) {
+            const res = await api.post<CalendarType>('/calendar', {
+              propertyId,
+              date: localDate.toISOString(),
+            });
+            setDates((prev) => [...prev, res.data]);
+          }
+        } catch (err) {
+          console.error('Error bloqueando fecha:', err);
+        }
       }
+
       current.setDate(current.getDate() + 1);
     }
   };
 
-  const tileClassName = ({ date, view }: { date: Date; view: string }) => {
-    if (view === 'month') {
-      const isUnavailable = dates.some(
-        (d) => new Date(d.date).toDateString() === date.toDateString()
-      );
-      return isUnavailable ? 'unavailable-date' : null;
+  const handleDayClick = (date: Date) => {
+    if (!selection.from) {
+      setSelection({ from: date });
+      return;
     }
+
+    const from = new Date(selection.from.getFullYear(), selection.from.getMonth(), selection.from.getDate());
+    const to = new Date(date.getFullYear(), date.getMonth(), date.getDate());
+
+    const nights = Math.max(1, Math.ceil((to.getTime() - from.getTime()) / (1000 * 60 * 60 * 24)));
+    const action = isUnblockMode ? 'desbloquear' : 'bloquear';
+    const price = pricePerNight && !isUnblockMode ? nights * pricePerNight : null;
+
+    const confirmAction = window.confirm(
+      `¿Confirmas ${action} ${nights} noche(s) del ${from.toDateString()} al ${to.toDateString()}${
+        price ? ` por un total de $${price}` : ''
+      }?`
+    );
+
+    if (confirmAction) {
+      applyDateRange(from, to, isUnblockMode);
+    }
+
+    setSelection({});
+  };
+
+  const getBlockedDates = () => {
+    return dates
+      .map((d) => {
+        const date = new Date(d.date);
+        return new Date(date.getFullYear(), date.getMonth(), date.getDate());
+      })
+      .filter((d) => !isNaN(d.getTime()));
   };
 
   return (
     <div className="mt-4">
-      <h4 className="font-semibold mb-2">Bloquear fechas (click para rango)</h4>
-        <Calendar
-        selectRange
-        value={range ?? undefined}
-        onChange={handleRangeSelection}
-        tileClassName={tileClassName}
-        />
+      <div className="flex items-center justify-between mb-2">
+        <h4 className="font-semibold text-[#4A7150]">Calendario de disponibilidad</h4>
+        <label className="flex items-center gap-2 text-sm text-gray-700">
+          <input
+            type="checkbox"
+            checked={isUnblockMode}
+            onChange={() => {
+              setIsUnblockMode(!isUnblockMode);
+              setSelection({});
+            }}
+          />
+          Modo desbloqueo
+        </label>
+      </div>
 
-      <style jsx>{`
+      <DayPicker
+        mode="single"
+        selected={undefined}
+        onDayClick={handleDayClick}
+        numberOfMonths={1}
+        pagedNavigation
+        modifiers={{
+          blocked: getBlockedDates(),
+        }}
+        modifiersClassNames={{
+          blocked: 'unavailable-date',
+        }}
+      />
+
+      <style>{`
         .unavailable-date {
           background: #e2e8f0;
           text-decoration: line-through;

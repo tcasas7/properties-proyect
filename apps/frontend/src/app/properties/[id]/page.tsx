@@ -9,10 +9,10 @@ import { Button } from "@/components/ui/button";
 import "keen-slider/keen-slider.min.css";
 import { useKeenSlider } from "keen-slider/react";
 import { ChevronLeft, ChevronRight, X, ArrowLeft } from "lucide-react";
-import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { Calendar } from "../../../../../../shared/types/calendar";
 import { differenceInCalendarDays } from "date-fns";
+import BookingCard from "@/components/BookingCard";
 
 export default function PropertyPage() {
   const { id } = useParams();
@@ -63,14 +63,25 @@ export default function PropertyPage() {
     window.open(url, "_blank");
   };
 
+  
   return (
     <div className="min-h-screen flex flex-col bg-[#FFF1F2] text-[#4A7150]">
-    <header className="sticky top-0 z-50 bg-[url('/images/pastel.jpg')] bg-cover border-b shadow-sm px-4 py-4 flex items-center gap-4">
-      <button onClick={() => router.push("/")} className="text-[#4A7150]-600 hover:text-pink-700">
-        <ArrowLeft size={24} />
-      </button>
-      <span className="text-sm font-medium text-[#4A7150]">Volver</span>
+    <header className="sticky top-0 z-50 bg-[#fdcae1]/80 backdrop-blur-md shadow-sm">
+      <div className="flex items-center justify-between px-4 md:px-12 py-4">
+        <div className="flex items-center gap-3">
+          <button
+            onClick={() => router.back()}
+            className="text-[#4A7150] hover:text-[#3a624e] transition"
+            aria-label="Volver"
+          >
+            <ArrowLeft size={22} />
+          </button>
+          <span className="text-sm font-medium text-[#4A7150]">Volver</span>
+        </div>
+        <span className="text-lg font-semibold text-[#4A7150]">PremiumStays</span>
+      </div>
     </header>
+
 
       <main className="max-w-screen-xl mx-auto px-4 py-10 space-y-10">
         <div className="mb-8">
@@ -121,43 +132,48 @@ export default function PropertyPage() {
 
           <div className="flex flex-col justify-between space-y-6 p-6 bg-white rounded-2xl shadow-md border">
             <div>
-   <p className="text-lg leading-relaxed mb-6 whitespace-pre-line">
-      {property.description}
-    </p>
-              <p className="text-2x1 font-semibold text-pink-600 mb-4">
-                ${property.price} / noche
+              <p className="text-lg leading-relaxed mb-6 whitespace-pre-line">
+                {property.description}
               </p>
 
-              <div>
-                <h3 className="font-semibold mb-2">Seleccioná tu estadía</h3>
-                <DatePicker
-                  selected={startDate}
-                  onChange={(dates) => {
-                    const [start, end] = dates as [Date, Date];
-                    setStartDate(start);
-                    setEndDate(end);
-                  }}
-                  startDate={startDate}
-                  endDate={endDate}
-                  selectsRange
-                  inline
-                  excludeDates={disabledDates}
-                  className="rounded-md"
-                />
+              {/* Precio destacado */}
+              <p className="text-3xl font-bold text-[#4A7150] mb-2">
+                 <span className="text-xl font-bold" style={{ color: '4A7150' }}>
+                      ${property.price} / noche
+                    </span>
+              </p>
 
+              {/* Calendario */}
+              <div className="space-y-6">
+                <h3 className="font-semibold mb-3 text-[#4A7150] text-lg">Seleccioná tu estadía</h3>
+                <div className="flex justify-center">
+                  <div className="bg-[#fefefe] p-6 rounded-2xl shadow-md border w-full max-w-md">
+                    <BookingCard
+                      disabledDates={disabledDates}
+                      onSelectRange={({ startDate, endDate }) => {
+                        setStartDate(startDate);
+                        setEndDate(endDate);
+                      }}
+                    />
+                  </div>
+                </div>
+                {/* Total */}
                 {startDate && endDate && (
-                  <div className="text-sm mt-2 text-gray-700">
-                    {totalNights} noche(s) · Total:
-                    <span className="font-semibold text-pink-600"> ${totalPrice} USD</span>
+                  <div className="text-md mt-4 text-[#4A7150] font-medium">
+                    {totalNights} noche(s) · Total:{" "}
+                    <span className="text-xl font-bold" style={{ color: '4A7150' }}>
+                      ${totalPrice} USD
+                    </span>
                   </div>
                 )}
               </div>
             </div>
 
+            {/* Botón */}
             <Button
               disabled={!startDate || !endDate}
               onClick={handleBooking}
-              className="bg-pink-600 hover:bg-pink-700 disabled:bg-gray-300 disabled:cursor-not-allowed text-white w-full py-3 text-lg rounded-xl"
+              className="mt-5 w-full bg-[#4A7150] text-[#FFE7EC] py-6 text-xl rounded-2xl font-semibold hover:bg-[#3a624e] transition-all duration-200"
             >
               Reservar vía WhatsApp
             </Button>

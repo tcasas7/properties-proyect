@@ -51,9 +51,6 @@ return (
         </div>
       </section>
 
-
-
-
     {/* Main content */}
 <main className="w-full max-w-screen-xl mx-auto px-4 py-8 space-y-16">
 

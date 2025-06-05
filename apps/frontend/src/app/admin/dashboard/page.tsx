@@ -8,7 +8,7 @@ import toast from 'react-hot-toast';
 import { useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import CalendarManager from '@/components/CalendarManager'; 
-
+import Link from 'next/link';
 
 
 class FileListProxy {
@@ -111,6 +111,12 @@ export default function Dashboard() {
       >
         Cerrar sesión
       </button>
+<Link href="/">
+  <button className="bg-[#4A7150] text-white px-4 py-2 rounded hover:bg-[#3a624e]">
+    ← Volver al inicio
+  </button>
+</Link>
+
 
 
       {/* Formulario de creación */}
