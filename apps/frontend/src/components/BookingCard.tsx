@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { DateRange, DayPicker } from "react-day-picker";
 import "react-day-picker/dist/style.css";
 import { differenceInCalendarDays } from "date-fns";
+import { baseCalendarClassName, baseCalendarModifiersClassNames } from "@/app/calendarStyles";
 
 interface BookingCardProps {
   disabledDates: Date[];
@@ -34,21 +35,12 @@ export default function BookingCard({ disabledDates, onSelectRange }: BookingCar
         pagedNavigation
         disabled={disabledDates}
         modifiersClassNames={{
+          ...baseCalendarModifiersClassNames,
           selected: "bg-[#4A7150] text-[#4A7150] font-bold",
-          range_start: "bg-[#4A7150] text-white rounded-l-full",
-          range_end: "bg-[#4A7150] text-white rounded-r-full",
-          range_middle: "bg-[#FFF1F2] text-[#4A7150]",
-          disabled: "text-gray-300 line-through",
         }}
         classNames={{
-          caption: "text-[#4A7150] font-semibold",
-          head_cell: "text-[#4A7150]",
-          nav_button: "text-[#4A7150] fill-[#4A7150] stroke-[#4A7150] font-bold",
-          day_selected: "text-[#4A7150] font-bold", // ← días seleccionados
-          day_range_start: " text-[#4A7150] font-bold",
-          day_range_end: "text-[#4A7150] font-bold",
-          day_range_middle: "text-[#4A7150] font-semibold",
-          
+          ...baseCalendarClassName,
+          day_selected: "text-[#4A7150] font-bold", 
         }}
       />
     </div>

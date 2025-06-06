@@ -4,6 +4,7 @@ import { DayPicker } from 'react-day-picker';
 import 'react-day-picker/dist/style.css';
 import api from '@/lib/api';
 import type { Calendar as CalendarType } from '../../../../shared/types/calendar';
+import { baseCalendarClassName, baseCalendarModifiersClassNames } from "@/app/calendarStyles";
 
 interface Props {
   propertyId: number;
@@ -33,8 +34,8 @@ export default function CalendarManager({ propertyId, pricePerNight }: Props) {
     let to = new Date(end.getFullYear(), end.getMonth(), end.getDate());
     if (from > to) [from, to] = [to, from];
 
-    const current = new Date(from);
-    while (current <= to) {
+      const current = new Date(from);
+      while (isUnblock ? current <= to : current < to) {
       const localDate = new Date(current.getFullYear(), current.getMonth(), current.getDate());
       const isoDate = localDate.toISOString().split('T')[0];
 
@@ -86,13 +87,15 @@ export default function CalendarManager({ propertyId, pricePerNight }: Props) {
     const to = new Date(date.getFullYear(), date.getMonth(), date.getDate());
 
     const nights = Math.max(1, Math.ceil((to.getTime() - from.getTime()) / (1000 * 60 * 60 * 24)));
-    const action = isUnblockMode ? 'desbloquear' : 'bloquear';
+    
     const price = pricePerNight && !isUnblockMode ? nights * pricePerNight : null;
 
     const confirmAction = window.confirm(
-      `¿Confirmas ${action} ${nights} noche(s) del ${from.toDateString()} al ${to.toDateString()}${
-        price ? ` por un total de $${price}` : ''
-      }?`
+      isUnblockMode
+        ? `¿Confirmás desbloquear del ${from.toDateString()} al ${to.toDateString()} (incluyendo el último día seleccionado)?`
+        : `¿Confirmás bloquear ${nights} noche(s) del ${from.toDateString()} al ${to.toDateString()} (día de salida: ${to.toDateString()})${
+            price ? ` por un total de $${price}` : ''
+          }?`
     );
 
     if (confirmAction) {
@@ -112,43 +115,50 @@ export default function CalendarManager({ propertyId, pricePerNight }: Props) {
   };
 
   return (
-    <div className="mt-4">
-      <div className="flex items-center justify-between mb-2">
-        <h4 className="font-semibold text-[#4A7150]">Calendario de disponibilidad</h4>
-        <label className="flex items-center gap-2 text-sm text-gray-700">
-          <input
-            type="checkbox"
-            checked={isUnblockMode}
-            onChange={() => {
-              setIsUnblockMode(!isUnblockMode);
-              setSelection({});
-            }}
-          />
-          Modo desbloqueo
-        </label>
-      </div>
-
-      <DayPicker
-        mode="single"
-        selected={undefined}
-        onDayClick={handleDayClick}
-        numberOfMonths={1}
-        pagedNavigation
-        modifiers={{
-          blocked: getBlockedDates(),
-        }}
-        modifiersClassNames={{
-          blocked: 'unavailable-date',
-        }}
-      />
-
-      <style>{`
-        .unavailable-date {
-          background: #e2e8f0;
-          text-decoration: line-through;
-          color: #a0aec0;
-        }
-      `}</style>
+  <div className="mt-4 custom-calendar">
+    <div className="flex items-center justify-between mb-2">
+      <h4 className="font-semibold text-[#4A7150]">Calendario de disponibilidad</h4>
+      <label className="flex items-center gap-2 text-sm text-gray-700">
+        <input
+          type="checkbox"
+          checked={isUnblockMode}
+          onChange={() => {
+            setIsUnblockMode(!isUnblockMode);
+            setSelection({});
+          }}
+        />
+        Modo desbloqueo
+      </label>
     </div>
-  );
+
+   <DayPicker
+  mode="single"
+  selected={undefined}
+  onDayClick={handleDayClick}
+  numberOfMonths={1}
+  pagedNavigation
+  modifiers={{
+    blocked: getBlockedDates(),
+  }}
+  modifiersClassNames={{
+    ...baseCalendarModifiersClassNames,
+    blocked: "unavailable-date",
+    selected: "text-[#4A7150] font-bold border border-[#4A7150] rounded-full",
+  }}
+  classNames={baseCalendarClassName}
+/>
+
+
+    <style>{`
+    .unavailable-date {
+      background: transparent;
+      color: #4A7150;
+      opacity: 0.5;
+      text-decoration: line-through;
+      font-weight: normal;
+    }
+    `}</style>
+  </div>
+);
+
 }

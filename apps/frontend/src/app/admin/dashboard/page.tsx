@@ -103,42 +103,58 @@ export default function Dashboard() {
 };
 
  return (
-    <div className="p-6 space-y-8">
-      <h1 className="text-2xl font-bold">Admin Dashboard</h1>
+  <>
+    <header className="w-full bg-[#ffe5f0] px-6 py-4 flex items-center justify-between shadow">
+    
+      <Link href="/">
+        <button className="bg-[#4A7150] text-white px-4 py-2 rounded hover:bg-[#3a624e]">
+          Home
+        </button>
+      </Link>
+
+      <h1 className="text-2xl font-bold text-[#4A7150] text-center">
+        Admin Dashboard
+      </h1>
+
       <button
         onClick={handleLogout}
-        className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600 float-right"
+        className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600"
       >
         Cerrar sesión
       </button>
-<Link href="/">
-  <button className="bg-[#4A7150] text-white px-4 py-2 rounded hover:bg-[#3a624e]">
-    ← Volver al inicio
-  </button>
-</Link>
-
-
-
+    </header>
+  <main className="p-6 space-y-8 bg-[#FFF1F2] min-h-screen">
       {/* Formulario de creación */}
-      <form onSubmit={handleSubmit} className="space-y-4 bg-white p-4 rounded shadow">
-        <input name="title" value={form.title} onChange={handleChange} placeholder="Título" className="w-full p-2 border rounded" required />
+      <form onSubmit={handleSubmit} className="space-y-4 bg-[#ffe5f0] p-6 rounded-xl shadow">
+        <input name="title" value={form.title} onChange={handleChange} placeholder="Título" className="w-full p-2 border border-[#4A7150]/30 rounded focus:ring-[#4A7150] focus:border-[#4A7150]" required />
         <input
           name="subtitle"
           value={form.subtitle}
           onChange={handleChange}
           placeholder="Subtítulo (ej: ideal para parejas, 3 personas)"
-          className="w-full p-2 border rounded"
+          className="w-full p-2 border border-[#4A7150]/30 rounded focus:ring-[#4A7150] focus:border-[#4A7150]"
         />
-
-
         {/*<input name="location" value={form.location} onChange={handleChange} placeholder="Ubicación" className="w-full p-2 border rounded" required />*/}
-        <input name="price" type="number" value={form.price} onChange={handleChange} placeholder="Precio" className="w-full p-2 border rounded" required />
+        <input
+          name="price"
+          type="text" 
+          value={form.price === 0 ? '' : form.price} 
+          onChange={(e) => {
+            const value = e.target.value;
+            setForm((prev) => ({
+              ...prev,
+              price: value === '' ? 0 : Number(value),
+            }));
+          }}
+          placeholder="Precio"
+          className="w-full p-2 border border-[#4A7150]/30 rounded focus:ring-[#4A7150] focus:border-[#4A7150]"
+        />
         <textarea name="description" value={form.description} onChange={handleChange} placeholder="Descripción" className="w-full p-2 border rounded" rows={4} />
         <select
           name="country"
           value={form.country}
           onChange={handleChange}
-          className="w-full p-2 border rounded"
+          className="w-full p-2 border border-[#4A7150]/30 rounded bg-[#FFF1F2] text-[#4A7150] focus:ring-[#4A7150] focus:border-[#4A7150] appearance-none"
           required
         >
           <option value="">Seleccioná un país</option>
@@ -160,16 +176,19 @@ export default function Dashboard() {
           <input type="file" accept="image/*" onChange={(e) => {
             const file = e.target.files?.[0];
             if (file) setFiles(new FileListProxy([...(files ? Array.from(files) : []), file]));
-          }} className="w-full p-2 border rounded" />
+          }} className="w-full p-2 border border-[#4A7150]/30 rounded focus:ring-[#4A7150] focus:border-[#4A7150]" />
         </div>
-
-        <button type="submit" className="bg-blue-600 text-white px-4 py-2 rounded">Crear Propiedad</button>
-      </form>
-
+        <button
+          type="submit"
+          className="bg-[#4A7150] text-white px-4 py-2 rounded hover:bg-[#3a624e]"
+        >
+          Crear Propiedad
+        </button>
+        </form>
       {/* Lista de propiedades */}
       <div className="space-y-4">
         {properties.map((p) => (
-          <div key={p.id} className="border p-4 rounded bg-gray-100">
+          <div key={p.id} className="border p-4 rounded bg-[#ffe5f0] shadow-sm">
             <div className="flex justify-between items-start">
               {editingId === p.id ? (
                 <div className="space-y-2 w-full">
@@ -179,10 +198,21 @@ export default function Dashboard() {
                     value={editForm.subtitle ?? ""}
                     onChange={handleEditChange}
                     placeholder="Subtítulo (ej: ideal para parejas, 3 personas)"
-                    className="w-full p-1 border rounded"
+                    className="w-full p-2 border border-[#4A7150]/30 rounded focus:ring-[#4A7150] focus:border-[#4A7150]"
                   />
-
-                  <input name="price" type="number" value={editForm.price} onChange={handleEditChange} className="w-full p-1 border rounded" />
+                 <input
+                    name="price"
+                    type="text"
+                    value={editForm.price === 0 || editForm.price === undefined ? '' : editForm.price}
+                    onChange={(e) => {
+                      const value = e.target.value;
+                      setEditForm((prev) => ({
+                        ...prev,
+                        price: value === '' ? 0 : Number(value),
+                      }));
+                    }}
+                    className="w-full p-2 border border-[#4A7150]/30 rounded focus:ring-[#4A7150] focus:border-[#4A7150]"
+                  />
                   <textarea name="description" value={editForm.description} onChange={handleEditChange} className="w-full p-1 border rounded" rows={3} />
                   <input
                     type="file"
@@ -206,7 +236,7 @@ export default function Dashboard() {
                         toast.error('Error al agregar imágenes');
                       }
                     }}
-                    className="w-full p-2 border rounded"
+                    className="w-full p-2 border border-[#4A7150]/30 rounded focus:ring-[#4A7150] focus:border-[#4A7150]"
                   />
 
                   <div className="flex gap-2 mt-2">
@@ -224,8 +254,8 @@ export default function Dashboard() {
                         toast.dismiss();
                         toast.error('Error al actualizar');
                       }
-                    }} className="bg-blue-600 text-white px-3 py-1 rounded text-sm">Guardar</button>
-                    <button onClick={() => setEditingId(null)} className="text-gray-600 text-sm underline">Cancelar</button>
+                    }}className="bg-[#4A7150] text-white px-3 py-1 rounded text-sm hover:bg-[#3a624e]">Guardar</button>
+                    <button onClick={() => setEditingId(null)} className="text-red-500 text-sm hover:underline">Cancelar</button>
                   </div>
                 </div>
               ) : (
@@ -244,7 +274,7 @@ export default function Dashboard() {
                         subtitle: p.subtitle ?? "",
                       });
                     }}
-                    className="mt-2 block text-blue-600 text-sm bg-blue-100 px-3 py-1 rounded hover:bg-blue-200"
+                    className="mt-2 block text-[#4A7150] text-sm bg-[#FFD6E0] px-3 py-1 rounded hover:bg-[#e4717a]"
                     >
                      Editar
                   </button>
@@ -311,6 +341,7 @@ export default function Dashboard() {
           </div>
         ))}
       </div>
-    </div>
+    </main>
+    </>
   );
 }

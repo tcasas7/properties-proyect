@@ -138,6 +138,11 @@ html {
   justify-content: center;
 }
 
+.unavailable-date {
+  background: #e2e8f0;
+  text-decoration: line-through;
+  color: #a0aec0;
+}
 
 /* Polygon interno (flechita real) */
 .custom-calendar .rdp-button_previous polygon,
