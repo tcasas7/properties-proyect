@@ -178,7 +178,28 @@ export default function PropertyPage() {
               Reservar vía WhatsApp
             </Button>
           </div>
+          
         </div>
+
+      {property.latitude && property.longitude && (
+        <div className="mt-10">
+          <h3 className="text-lg font-semibold mb-4 text-[#4A7150]">Ubicación en el mapa</h3>
+          <iframe
+            width="100%"
+            height="300"
+            style={{ border: 0, borderRadius: '12px' }}
+            loading="lazy"
+            allowFullScreen
+            src={`https://maps.google.com/maps?q=${property.latitude},${property.longitude}&z=15&output=embed`}
+          ></iframe>
+          {/* Dirección abajo del mapa */}
+          <p className="mt-3 text-center text-sm text-gray-600">
+            Dirección: {property.location}
+          </p>
+        </div>
+      )}
+
+
       </main>
 
       {galleryOpen && (

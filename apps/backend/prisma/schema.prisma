@@ -12,6 +12,8 @@ model Property {
   title     String
   subtitle    String?
   location  String
+  latitude  Float?
+  longitude Float?
   country   String
   images    String[]
   available Boolean  @default(true)

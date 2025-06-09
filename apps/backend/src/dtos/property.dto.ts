@@ -28,5 +28,13 @@ export class CreatePropertyDto {
   @IsString()
   country: string;
 
+  @IsOptional()
+  @IsNumber()
+  latitude?: number;
+
+  @IsOptional()
+  @IsNumber()
+  longitude?: number;
+
 }
 

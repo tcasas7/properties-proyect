@@ -48,12 +48,21 @@ export class PropertiesController {
       title: body.title,
       subtitle: body.subtitle ?? '',
       location: body.location,
-       price: Number(body.price),
+      latitude: body.latitude ? Number(body.latitude) : undefined,
+      longitude: body.longitude ? Number(body.longitude) : undefined,
+      price: Number(body.price),
       description: body.description ?? '',
       country: body.country, 
       images: imagePaths,
       available: true,
     };
+    
+    if (!propertyData.latitude || !propertyData.longitude) {
+      const { lat, lng } = await this.propertiesService.geocodeAddress(propertyData.location);
+      propertyData.latitude = lat;
+      propertyData.longitude = lng;
+}
+
     return this.propertiesService.create(propertyData);
   }
 
@@ -101,6 +110,12 @@ export class PropertiesController {
   @Put(':id')
   @UseGuards(JwtAuthGuard)
   async update(@Param('id', ParseIntPipe) id: number, @Body() body: any) {
+    if ((!body.latitude || !body.longitude) && body.location) {
+      const { lat, lng } = await this.propertiesService.geocodeAddress(body.location);
+      body.latitude = lat;
+      body.longitude = lng;
+  }
+    
     return this.propertiesService.update(id, body);
   }
 

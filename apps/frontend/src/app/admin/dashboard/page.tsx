@@ -29,6 +29,8 @@ export default function Dashboard() {
     title: '',
     subtitle: '',
     location: '',
+    latitude: '',
+    longitude: '',
     price: 0,
     description: '',
     country: '',
@@ -73,6 +75,8 @@ export default function Dashboard() {
     formData.append('title', form.title);
     formData.append('subtitle', form.subtitle);
     formData.append('location', form.location);
+    formData.append('latitude', form.latitude);
+    formData.append('longitude', form.longitude);
     formData.append('price', String(form.price));
     formData.append('description', form.description);
     formData.append('country', form.country);
@@ -87,7 +91,7 @@ export default function Dashboard() {
     try {
       await api.post('/properties', formData);
       toast.success('Propiedad creada con éxito');
-      setForm({ title: '', subtitle: '', location: '', price: 0, description: '', country: '' });
+      setForm({ title: '', subtitle: '', location: '', price: 0, description: '', country: '', latitude: '', longitude: '' });
       setFiles(null);
       fetchProperties();
     } catch (err) {
@@ -124,6 +128,7 @@ export default function Dashboard() {
       </button>
     </header>
   <main className="p-6 space-y-8 bg-[#FFF1F2] min-h-screen">
+
       {/* Formulario de creación */}
       <form onSubmit={handleSubmit} className="space-y-4 bg-[#ffe5f0] p-6 rounded-xl shadow">
         <input name="title" value={form.title} onChange={handleChange} placeholder="Título" className="w-full p-2 border border-[#4A7150]/30 rounded focus:ring-[#4A7150] focus:border-[#4A7150]" required />
@@ -138,7 +143,8 @@ export default function Dashboard() {
         <input
           name="price"
           type="text" 
-          value={form.price === 0 ? '' : form.price} 
+          step="0.01"
+          value={Number.isFinite(form.price) ? form.price : ''}
           onChange={(e) => {
             const value = e.target.value;
             setForm((prev) => ({
@@ -161,6 +167,15 @@ export default function Dashboard() {
           <option value="Argentina">Argentina</option>
           <option value="España">España</option>
         </select>
+
+        <input
+          name="location"
+          value={form.location}
+          onChange={handleChange}
+          placeholder="Ubicación / Dirección"
+          className="w-full p-2 border border-[#4A7150]/30 rounded focus:ring-[#4A7150] focus:border-[#4A7150]"
+        />
+
         <div className="space-y-2">
           <label className="block font-semibold">Imágenes</label>
           {Array.from(files || []).map((file, i) => (
@@ -239,6 +254,42 @@ export default function Dashboard() {
                     className="w-full p-2 border border-[#4A7150]/30 rounded focus:ring-[#4A7150] focus:border-[#4A7150]"
                   />
 
+                  <input
+                  name="location"
+                  value={editForm.location ?? ''}
+                  onChange={handleEditChange}
+                  placeholder="Ubicación / Dirección"
+                  className="w-full p-2 border border-[#4A7150]/30 rounded focus:ring-[#4A7150] focus:border-[#4A7150]"
+                />
+                <input
+                  name="latitude"
+                  type="text"
+                  value={editForm.latitude == null ? '' : editForm.latitude}
+                  onChange={(e) => {
+                    const value = e.target.value;
+                    setEditForm((prev) => ({
+                      ...prev,
+                      latitude: value === '' ? undefined : Number(value),
+                    }));
+                  }}
+                  placeholder="Latitud (opcional)"
+                  className="w-full p-2 border border-[#4A7150]/30 rounded focus:ring-[#4A7150] focus:border-[#4A7150]"
+                />
+
+                <input
+                  name="longitude"
+                  type="text"
+                  value={editForm.longitude == null ? '' : editForm.longitude}
+                  onChange={(e) => {
+                    const value = e.target.value;
+                    setEditForm((prev) => ({
+                      ...prev,
+                      longitude: value === '' ? undefined : Number(value),
+                    }));
+                  }}
+                  placeholder="Longitud (opcional)"
+                  className="w-full p-2 border border-[#4A7150]/30 rounded focus:ring-[#4A7150] focus:border-[#4A7150]"
+                />
                   <div className="flex gap-2 mt-2">
                     <button onClick={async () => {
                       try {

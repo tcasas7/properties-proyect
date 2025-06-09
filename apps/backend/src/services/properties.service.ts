@@ -12,6 +12,8 @@ export class PropertiesService {
         title: data.title,
         subtitle: data.subtitle ?? "",
         location: data.location,
+        latitude: data.latitude,
+        longitude: data.longitude,
         images: data.images,
         price: data.price,
         description: data.description ?? "",
@@ -28,6 +30,8 @@ export class PropertiesService {
       title: data.title,
       subtitle: data.subtitle ?? "",
       location: data.location,
+      latitude: data.latitude ?? null,
+      longitude: data.longitude ?? null,
       price: data.price,
       description: data.description ?? "",
       available: data.available,
@@ -77,4 +81,22 @@ export class PropertiesService {
       where: { id },
     });
   }
+
+  async geocodeAddress(address: string): Promise<{ lat: number; lng: number }> {
+  const url = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(address)}&limit=1`;
+  const res = await fetch(url, {
+    headers: {
+      'User-Agent': 'MiProyectoPropiedades/1.0 (tomas.casas7@hotmail.com)', 
+    },
+  });
+  const data = await res.json();
+  if (data.length === 0) {
+    throw new Error('No se pudo geocodificar la dirección');
+  }
+  return {
+    lat: parseFloat(data[0].lat),
+    lng: parseFloat(data[0].lon),
+  };
+}
+
 }
