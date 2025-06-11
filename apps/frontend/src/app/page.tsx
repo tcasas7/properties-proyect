@@ -39,7 +39,7 @@ return (
   <div className="min-h-screen flex flex-col bg-[#FFF1F2] text-[#4A7150]">
     <Header/>
 
-    {/* Hero Section */}
+   
       <section className="relative min-h-[40vh] flex items-center justify-center text-center py-16 bg-[#ffe5f0]">
         <div className="relative z-10 px-6 max-w-3xl mx-auto">
           <h1 className="text-3xl md:text-4xl font-semibold text-[#4A7150] leading-tight mb-4">
@@ -51,7 +51,7 @@ return (
         </div>
       </section>
 
-    {/* Main content */}
+    
   <main className="w-full max-w-screen-xl mx-auto px-4 py-8 space-y-16">
 
   <section id="argentina">
@@ -159,8 +159,7 @@ function PropertyCard({ property }: { property: Property }) {
         )}
         <div className="p-6">
           <h3 className="text-xl font-semibold mb-1 text-[#4A7150]">{property.title}</h3>
-          <p className="text-sm text-[#4A7150]">
-            {property.location}
+          <p className="text-lg text-[#4A7150]">
             {property.subtitle ? `  ${property.subtitle}` : ""}
           </p>
           <p className="text-[#4A7150] font-bold mt-2">${property.price}</p>

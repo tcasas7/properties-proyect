@@ -78,17 +78,17 @@ export default function PropertyPage() {
           </button>
           <span className="text-sm font-medium text-[#4A7150]">Volver</span>
         </div>
-        <span className="text-lg font-semibold text-[#4A7150]">PremiumStays</span>
+        <span className="hover:text-[#3c5945]">PremiumStays</span>
       </div>
     </header>
 
 
       <main className="max-w-screen-xl mx-auto px-4 py-10 space-y-10">
         <div className="mb-8">
+          
           <h1 className="text-4xl font-bold text-[#4A7150] mb-1">{property.title}</h1>
-          <p className="text-sm text-gray-500">
-            {property.location}
-            {property.subtitle ? ` - ${property.subtitle}` : ""}
+          <p className="text-lg text-[#4A7150] font-medium mt-2">
+            {property.subtitle}
           </p>
         </div>
 
@@ -193,7 +193,8 @@ export default function PropertyPage() {
             src={`https://maps.google.com/maps?q=${property.latitude},${property.longitude}&z=15&output=embed`}
           ></iframe>
           {/* Dirección abajo del mapa */}
-          <p className="mt-3 text-center text-sm text-gray-600">
+          <p className="text-lg font-semibold mb-4 text-[#4A7150] mt-4">
+            
             Dirección: {property.location}
           </p>
         </div>

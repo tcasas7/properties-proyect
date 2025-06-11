@@ -228,7 +228,13 @@ export default function Dashboard() {
                     }}
                     className="w-full p-2 border border-[#4A7150]/30 rounded focus:ring-[#4A7150] focus:border-[#4A7150]"
                   />
-                  <textarea name="description" value={editForm.description} onChange={handleEditChange} className="w-full p-1 border rounded" rows={3} />
+                  <textarea
+                    name="description"
+                    value={editForm.description}
+                    onChange={handleEditChange}
+                    className="w-full p-2 border border-[#4A7150]/30 rounded focus:ring-[#4A7150] focus:border-[#4A7150]"
+                    rows={8}
+                  />
                   <input
                     type="file"
                     accept="image/*"
