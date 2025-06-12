@@ -10,13 +10,16 @@ export class PropertiesService {
     return this.prisma.property.create({
       data: {
         title: data.title,
+        title_en: data.title_en ?? '',
         subtitle: data.subtitle ?? "",
+        subtitle_en: data.subtitle_en ?? '',
         location: data.location,
         latitude: data.latitude,
         longitude: data.longitude,
         images: data.images,
         price: data.price,
         description: data.description ?? "",
+        description_en: data.description_en ?? '',
         country: data.country,
         available: data.available ?? true,
       },
@@ -28,14 +31,17 @@ export class PropertiesService {
     where: { id },
     data: {
       title: data.title,
+      title_en: data.title_en ?? '',
       subtitle: data.subtitle ?? "",
+      subtitle_en: data.subtitle_en ?? '',
       location: data.location,
       latitude: data.latitude ?? null,
       longitude: data.longitude ?? null,
       price: data.price,
       description: data.description ?? "",
+      description_en: data.description_en ?? '',
       available: data.available,
-      // no actualizamos imágenes en este flujo (por ahora)
+      
     },
   });
 }

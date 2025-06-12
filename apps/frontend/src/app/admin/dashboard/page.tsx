@@ -9,7 +9,18 @@ import { useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import CalendarManager from '@/components/CalendarManager'; 
 import Link from 'next/link';
+import { confirmDialog } from '@/components/ConfrimDialog';
+import { jwtDecode }  from 'jwt-decode';
 
+function isTokenExpired(token: string): boolean {
+  try {
+    const decoded = jwtDecode<{ exp: number }>(token);
+    const now = Date.now().valueOf() / 1000;
+    return decoded.exp < now;
+  } catch {
+    return true;
+  }
+}
 
 class FileListProxy {
   constructor(private files: File[]) {
@@ -27,12 +38,15 @@ export default function Dashboard() {
   const [properties, setProperties] = useState<Property[]>([]);
   const [form, setForm] = useState({
     title: '',
+    title_en: '',
     subtitle: '',
+    subtitle_en: '',
     location: '',
     latitude: '',
     longitude: '',
     price: 0,
     description: '',
+    description_en: '',
     country: '',
   });
   const [files, setFiles] = useState<FileList | null>(null);
@@ -49,6 +63,13 @@ export default function Dashboard() {
     const res = await api.get<Property[]>('/properties');
     setProperties(res.data);
   };
+
+    useEffect(() => {
+    const token = localStorage.getItem('token');
+    if (!token || isTokenExpired(token)) {
+      router.push('/admin/login');
+    }
+  }, [router]);
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
@@ -73,12 +94,15 @@ export default function Dashboard() {
 
     const formData = new FormData();
     formData.append('title', form.title);
+    formData.append('title_en', form.title_en);
     formData.append('subtitle', form.subtitle);
+    formData.append('subtitle_en', form.subtitle_en );
     formData.append('location', form.location);
     formData.append('latitude', form.latitude);
     formData.append('longitude', form.longitude);
     formData.append('price', String(form.price));
     formData.append('description', form.description);
+    formData.append('description_en', form.description_en);
     formData.append('country', form.country);
 
 
@@ -91,7 +115,7 @@ export default function Dashboard() {
     try {
       await api.post('/properties', formData);
       toast.success('Propiedad creada con éxito');
-      setForm({ title: '', subtitle: '', location: '', price: 0, description: '', country: '', latitude: '', longitude: '' });
+      setForm({ title: '', subtitle: '', location: '', price: 0, description: '', country: '', latitude: '', longitude: '', title_en: '', subtitle_en: '', description_en: '' });
       setFiles(null);
       fetchProperties();
     } catch (err) {
@@ -133,10 +157,24 @@ export default function Dashboard() {
       <form onSubmit={handleSubmit} className="space-y-4 bg-[#ffe5f0] p-6 rounded-xl shadow">
         <input name="title" value={form.title} onChange={handleChange} placeholder="Título" className="w-full p-2 border border-[#4A7150]/30 rounded focus:ring-[#4A7150] focus:border-[#4A7150]" required />
         <input
+          name="title_en"
+          value={form.title_en}
+          onChange={handleChange}
+          placeholder="Title in English"
+          className="w-full p-2 border border-[#4A7150]/30 rounded focus:ring-[#4A7150] focus:border-[#4A7150]"
+        />  
+        <input
           name="subtitle"
           value={form.subtitle}
           onChange={handleChange}
           placeholder="Subtítulo (ej: ideal para parejas, 3 personas)"
+          className="w-full p-2 border border-[#4A7150]/30 rounded focus:ring-[#4A7150] focus:border-[#4A7150]"
+        />
+        <input
+          name="subtitle_en"
+          value={form.subtitle_en}
+          onChange={handleChange}
+          placeholder="Subtitle in English"
           className="w-full p-2 border border-[#4A7150]/30 rounded focus:ring-[#4A7150] focus:border-[#4A7150]"
         />
         {/*<input name="location" value={form.location} onChange={handleChange} placeholder="Ubicación" className="w-full p-2 border rounded" required />*/}
@@ -156,6 +194,14 @@ export default function Dashboard() {
           className="w-full p-2 border border-[#4A7150]/30 rounded focus:ring-[#4A7150] focus:border-[#4A7150]"
         />
         <textarea name="description" value={form.description} onChange={handleChange} placeholder="Descripción" className="w-full p-2 border rounded" rows={4} />
+        <textarea
+          name="description_en"
+          value={form.description_en}
+          onChange={handleChange}
+          placeholder="Description in English"
+          className="w-full p-2 border border-[#4A7150]/30 rounded focus:ring-[#4A7150] focus:border-[#4A7150]"
+          rows={6}
+        />
         <select
           name="country"
           value={form.country}
@@ -209,10 +255,22 @@ export default function Dashboard() {
                 <div className="space-y-2 w-full">
                   <input name="title" value={editForm.title} onChange={handleEditChange} className="w-full p-1 border rounded" />
                   <input
+                    name="title_en"
+                    value={editForm.title_en ?? ""}
+                    onChange={handleEditChange}
+                    className="w-full p-1 border rounded"
+                  />
+                  <input
                     name="subtitle"
                     value={editForm.subtitle ?? ""}
                     onChange={handleEditChange}
                     placeholder="Subtítulo (ej: ideal para parejas, 3 personas)"
+                    className="w-full p-2 border border-[#4A7150]/30 rounded focus:ring-[#4A7150] focus:border-[#4A7150]"
+                  />
+                  <input
+                    name="subtitle_en"
+                    value={editForm.subtitle_en ?? ""}
+                    onChange={handleEditChange}
                     className="w-full p-2 border border-[#4A7150]/30 rounded focus:ring-[#4A7150] focus:border-[#4A7150]"
                   />
                  <input
@@ -231,6 +289,13 @@ export default function Dashboard() {
                   <textarea
                     name="description"
                     value={editForm.description}
+                    onChange={handleEditChange}
+                    className="w-full p-2 border border-[#4A7150]/30 rounded focus:ring-[#4A7150] focus:border-[#4A7150]"
+                    rows={8}
+                  />
+                  <textarea
+                    name="description_en"
+                    value={editForm.description_en ?? ""}
                     onChange={handleEditChange}
                     className="w-full p-2 border border-[#4A7150]/30 rounded focus:ring-[#4A7150] focus:border-[#4A7150]"
                     rows={8}
@@ -338,10 +403,15 @@ export default function Dashboard() {
 
                 </div>
               )}
-
               <button
                 onClick={async () => {
-                  if (confirm('¿Estás seguro de eliminar esta propiedad?')) {
+                  const confirmed = await confirmDialog({
+                    message: '¿Estás seguro de eliminar esta propiedad?',
+                    confirmLabel: 'Eliminar',
+                    cancelLabel: 'Cancelar',
+                  });
+
+                  if (confirmed) {
                     try {
                       toast.loading('Eliminando propiedad...');
                       await api.delete(`/properties/${p.id}`);

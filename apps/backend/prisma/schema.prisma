@@ -10,7 +10,9 @@ datasource db {
 model Property {
   id        Int      @id @default(autoincrement())
   title     String
+  title_en      String?
   subtitle    String?
+  subtitle_en   String?
   location  String
   latitude  Float?
   longitude Float?
@@ -19,9 +21,9 @@ model Property {
   available Boolean  @default(true)
   price     Float 
   description String     @default("")
+  description_en String?
   calendar  Calendar[]
   bookings Booking[]
-
 }
 
 model Calendar {

@@ -13,6 +13,8 @@ import "react-datepicker/dist/react-datepicker.css";
 import { Calendar } from "../../../../../../shared/types/calendar";
 import { differenceInCalendarDays } from "date-fns";
 import BookingCard from "@/components/BookingCard";
+import { useLocale } from "@/context/LanguageContext";
+import propertyTranslations from "@/translations/property";
 
 export default function PropertyPage() {
   const { id } = useParams();
@@ -27,6 +29,8 @@ export default function PropertyPage() {
     loop: true,
     slideChanged: (s) => setSelectedIndex(s.track.details.rel),
   });
+  const { locale } = useLocale();
+  const t = propertyTranslations[locale];
 
   useEffect(() => {
     if (id) {
@@ -50,7 +54,11 @@ export default function PropertyPage() {
     document.body.style.overflow = galleryOpen ? "hidden" : "";
   }, [galleryOpen]);
 
-  if (!property) return <div className="text-center py-10">Cargando propiedad...</div>;
+  if (!property) return (
+  <div className="text-center py-10">
+    {locale === "es" ? "Cargando propiedad..." : "Loading property..."}
+  </div>
+);
 
   const totalNights = startDate && endDate ? differenceInCalendarDays(endDate, startDate) : 0;
   const totalPrice = property.price * totalNights;
@@ -58,7 +66,7 @@ export default function PropertyPage() {
   const handleBooking = () => {
     if (!startDate || !endDate) return;
     const url = `https://wa.me/5492233005228?text=${encodeURIComponent(
-      `Hola! 👋 Quiero reservar:\n\nPropiedad: ${property.title}\nUbicación: ${property.location}\nDesde: ${startDate.toLocaleDateString()}\nHasta: ${endDate.toLocaleDateString()}\nTotal (${totalNights} noches): $${totalPrice}`
+      `Hola! Quiero reservar:\n\nPropiedad: ${property.title}\nUbicación: ${property.location}\nDesde: ${startDate.toLocaleDateString()}\nHasta: ${endDate.toLocaleDateString()}\nTotal (${totalNights} noches): $${totalPrice}`
     )}`;
     window.open(url, "_blank");
   };
@@ -76,7 +84,9 @@ export default function PropertyPage() {
           >
             <ArrowLeft size={22} />
           </button>
-          <span className="text-sm font-medium text-[#4A7150]">Volver</span>
+          <span className="text-sm font-medium text-[#4A7150]">
+            {locale === "es" ? "Volver" : "Back"}
+          </span>
         </div>
         <span className="hover:text-[#3c5945]">PremiumStays</span>
       </div>
@@ -85,10 +95,11 @@ export default function PropertyPage() {
 
       <main className="max-w-screen-xl mx-auto px-4 py-10 space-y-10">
         <div className="mb-8">
-          
-          <h1 className="text-4xl font-bold text-[#4A7150] mb-1">{property.title}</h1>
+          <h1 className="text-4xl font-bold text-[#4A7150] mb-1">
+            {locale === "es" ? property.title : property.title_en}
+          </h1>
           <p className="text-lg text-[#4A7150] font-medium mt-2">
-            {property.subtitle}
+            {locale === "es" ? property.subtitle : property.subtitle_en}
           </p>
         </div>
 
@@ -132,20 +143,19 @@ export default function PropertyPage() {
 
           <div className="flex flex-col justify-between space-y-6 p-6 bg-white rounded-2xl shadow-md border">
             <div>
-              <p className="text-lg leading-relaxed mb-6 whitespace-pre-line">
-                {property.description}
-              </p>
-
+            <p className="text-lg leading-relaxed mb-6 whitespace-pre-line">
+              {locale === "es" ? property.description : property.description_en}
+            </p>
               {/* Precio destacado */}
               <p className="text-3xl font-bold text-[#4A7150] mb-2">
                  <span className="text-xl font-bold" style={{ color: '4A7150' }}>
-                      ${property.price} / noche
+                      ${property.price} / {locale === "es" ? t.night : t.night}
                     </span>
               </p>
 
               {/* Calendario */}
               <div className="space-y-6">
-                <h3 className="font-semibold mb-3 text-[#4A7150] text-lg">Seleccioná tu estadía</h3>
+                <h3 className="font-semibold mb-3 text-[#4A7150] text-lg">{t.selectStay}</h3>
                 <div className="flex justify-center">
                   <div className="bg-[#fefefe] p-6 rounded-2xl shadow-md border w-full max-w-md">
                     <BookingCard
@@ -160,7 +170,8 @@ export default function PropertyPage() {
                 {/* Total */}
                 {startDate && endDate && (
                   <div className="text-md mt-4 text-[#4A7150] font-medium">
-                    {totalNights} noche(s) · Total:{" "}
+                    {totalNights}{" "}
+                    {totalNights === 1 ? t.night : t.nights} · {t.total}{" "}
                     <span className="text-xl font-bold" style={{ color: '4A7150' }}>
                       ${totalPrice} USD
                     </span>
@@ -175,7 +186,7 @@ export default function PropertyPage() {
               onClick={handleBooking}
               className="mt-5 w-full bg-[#4A7150] text-[#FFE7EC] py-6 text-xl rounded-2xl font-semibold hover:bg-[#3a624e] transition-all duration-200"
             >
-              Reservar vía WhatsApp
+              {t.bookWhatsApp}
             </Button>
           </div>
           
@@ -183,7 +194,7 @@ export default function PropertyPage() {
 
       {property.latitude && property.longitude && (
         <div className="mt-10">
-          <h3 className="text-lg font-semibold mb-4 text-[#4A7150]">Ubicación en el mapa</h3>
+          <h3 className="text-lg font-semibold mb-4 text-[#4A7150]">{t.mapTitle}</h3>
           <iframe
             width="100%"
             height="300"
@@ -195,7 +206,7 @@ export default function PropertyPage() {
           {/* Dirección abajo del mapa */}
           <p className="text-lg font-semibold mb-4 text-[#4A7150] mt-4">
             
-            Dirección: {property.location}
+            {t.addressLabel} {property.location}
           </p>
         </div>
       )}

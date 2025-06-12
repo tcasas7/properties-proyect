@@ -36,5 +36,17 @@ export class CreatePropertyDto {
   @IsNumber()
   longitude?: number;
 
+  @IsOptional()
+  @IsString()
+  title_en?: string;
+
+  @IsOptional()
+  @IsString()
+  subtitle_en?: string;
+
+  @IsOptional()
+  @IsString()
+  description_en?: string;
+
 }
 

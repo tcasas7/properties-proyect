@@ -21,6 +21,7 @@ import { diskStorage } from 'multer';
 import { extname } from 'path';
 import { Express } from 'express';
 import { CreateCalendarDto } from 'src/dtos/calendar.dto';
+import { title } from 'process';
 
 
 @Controller('properties')
@@ -46,12 +47,15 @@ export class PropertiesController {
     const imagePaths = files.images?.map(file => `/uploads/${file.filename}`) || [];
     const propertyData = {
       title: body.title,
+      titleEn: body.title_en,
       subtitle: body.subtitle ?? '',
+      subtitleEn: body.subtitle_en ?? '',
       location: body.location,
       latitude: body.latitude ? Number(body.latitude) : undefined,
       longitude: body.longitude ? Number(body.longitude) : undefined,
       price: Number(body.price),
       description: body.description ?? '',
+      descriptionEn: body.description_en ?? '',
       country: body.country, 
       images: imagePaths,
       available: true,

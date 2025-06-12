@@ -5,6 +5,7 @@ import 'react-day-picker/dist/style.css';
 import api from '@/lib/api';
 import type { Calendar as CalendarType } from '../../../../shared/types/calendar';
 import { baseCalendarClassName, baseCalendarModifiersClassNames } from "@/app/calendarStyles";
+import { confirmDialog } from './ConfrimDialog';
 
 interface Props {
   propertyId: number;
@@ -77,7 +78,7 @@ export default function CalendarManager({ propertyId, pricePerNight }: Props) {
     }
   };
 
-  const handleDayClick = (date: Date) => {
+  const handleDayClick = async (date: Date) => {
     if (!selection.from) {
       setSelection({ from: date });
       return;
@@ -90,13 +91,15 @@ export default function CalendarManager({ propertyId, pricePerNight }: Props) {
     
     const price = pricePerNight && !isUnblockMode ? nights * pricePerNight : null;
 
-    const confirmAction = window.confirm(
-      isUnblockMode
+    const confirmAction = await confirmDialog({
+      message: isUnblockMode
         ? `¿Confirmás desbloquear del ${from.toDateString()} al ${to.toDateString()} (incluyendo el último día seleccionado)?`
         : `¿Confirmás bloquear ${nights} noche(s) del ${from.toDateString()} al ${to.toDateString()} (día de salida: ${to.toDateString()})${
             price ? ` por un total de $${price}` : ''
-          }?`
-    );
+          }?`,
+      confirmLabel: isUnblockMode ? 'Desbloquear' : 'Bloquear',
+      cancelLabel: 'Cancelar',
+    });
 
     if (confirmAction) {
       applyDateRange(from, to, isUnblockMode);
