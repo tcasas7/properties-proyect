@@ -36,11 +36,12 @@ export default function BookingCard({ disabledDates, onSelectRange }: BookingCar
         disabled={disabledDates}
         modifiersClassNames={{
           ...baseCalendarModifiersClassNames,
-          selected: "bg-[#4A7150] text-[#4A7150] font-bold",
+          selected: "bg-[#1A5E8D] text-white font-bold",
+          
         }}
         classNames={{
           ...baseCalendarClassName,
-          day_selected: "text-[#4A7150] font-bold", 
+          day_selected: "text-[#1A5E8D] font-bold",
         }}
       />
     </div>

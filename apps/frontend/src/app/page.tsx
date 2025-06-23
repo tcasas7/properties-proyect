@@ -37,42 +37,41 @@ export default function Home() {
   };
 
   const argentina = properties.filter((p) => p.country === "Argentina");
-  const espana = properties.filter((p) => p.country === "España");
+  //const espana = properties.filter((p) => p.country === "España");
 
 return (
-  <div className="min-h-screen flex flex-col bg-[#FFF1F2] text-[#4A7150]">
+  <div className="min-h-screen flex flex-col bg-[#A8D8E8] text-white drop-shadow-2xl">
     <Header />
 
-<section className="relative w-full h-[500px] sm:h-[600px] flex items-center justify-center 
-  bg-gradient-to-r from-[#ffe5f0] via-[#f8d9e6] to-[#fff4f8] overflow-hidden ">
-  
+<section className="relative w-full h-[250px] sm:h-[300px] flex items-center justify-center 
+  bg-gradient-to-r from-[#A8D8E8] via-[#66B2D6] to-[#3194C6] overflow-hidden">
+
   <Image
-    src="/images/panomarica.jpg"
+    src="/images/oceano.jpg"
     alt="Imagen de fondo"
     fill={true}
-    className="object-cover opacity-10" 
+    className="object-cover opacity-40"
     priority
   />
 
- 
   <div className="relative z-10 flex flex-col items-center justify-center h-full text-center px-4">
-    <h1 className="text-4xl md:text-6xl font-bold text-[#4A7150] mb-6 tracking-normal leading-snug">
+    <h1 className="text-2xl md:text-5xl font-bold text-white drop-shadow-2xl mb-3 tracking-normal leading-snug">
       {locale === "es"
-        ? "Encuentra tu próxima estadía de lujo"
+        ? "Encontrá tu próxima estadía de lujo"
         : "Find your next luxury stay"}
     </h1>
 
-    <p className="text-lg md:text-xl text-[#4A7150]/90 mb-6">
+    <p className="text-base md:text-2xl text-white/90 drop-shadow-2xl mb-4">
       {locale === "es"
-        ? "Propiedades seleccionadas en Argentina y España"
-        : "Selected properties in Argentina and Spain"}
+        ? "Propiedades seleccionadas en Mar del Plata"
+        : "Selected properties in Mar del Plata"}
     </p>
 
     <button
       onClick={() =>
         document.getElementById("contact")?.scrollIntoView({ behavior: "smooth" })
       }
-      className="bg-[#4A7150] text-white px-6 py-3 rounded-full text-lg font-medium shadow hover:bg-[#3a624e] transition"
+      className="bg-[#1A5E8D] text-[#EAF7FC] px-5 py-2 rounded-full text-base font-medium shadow hover:bg-[#154a72] transition"
     >
       {locale === "es" ? "Contáctanos" : "Contact Us"}
     </button>
@@ -80,10 +79,11 @@ return (
 </section>
 
 
+
   <main className="w-full max-w-screen-xl mx-auto px-4 py-8 space-y-16">
 
   <section id="argentina">
-    <h2 className="text-3xl font-bold text-center mb-6">{locale === "es" ? "Propiedades en Argentina" : "Properties in Argentina"}</h2>
+    <h2 className="text-3xl font-bold text-center mb-6 drop-shadow-lg">{locale === "es" ? "Propiedades en Mar del Plata" : "Properties in Mar del Plata"}</h2>
     <div className="flex flex-wrap justify-center gap-10">
       {argentina.map((prop) => (
         <PropertyCard key={prop.id} property={prop} locale={locale} />
@@ -91,17 +91,10 @@ return (
     </div>
   </section>
 
-  <section id="espania">
-    <h2 className="text-3xl font-bold text-center mb-6">{locale === "es" ? "Propiedades en España" : "Properties in Spain"}</h2>
-    <div className="flex flex-wrap justify-center gap-10">
-      {espana.map((prop) => (
-        <PropertyCard key={prop.id} property={prop} locale={locale}/>
-      ))}
-    </div>
-  </section>
 
-  <section className="bg-[#ffe5f0] text-[#4A7150] py-16 text-center rounded-xl">
-    <h2 className="text-3xl font-bold text-center mb-6">{locale === "es" ? "¿Por qué elegirnos?" : "Why choose us?"}</h2>
+
+  <section className="bg-[#66B2D6] text-white py-16 font text-center mb-6 drop-shadow-lg rounded-xl">
+    <h2 className="text-3xl font-bold text-center mb-6 drop-shadow-lg ">{locale === "es" ? "¿Por qué elegirnos?" : "Why choose us?"}</h2>
     <div className="flex flex-col md:flex-row justify-center gap-10 px-4">
       <div className="max-w-sm">
         <p className="text-lg font mb-8"> {locale === "es"
@@ -121,8 +114,8 @@ return (
     </div>
   </section>
 
-  <section id="about" className="bg-[#ffe5f0] py-16 text-center rounded-xl shadow-sm text-[#4A7150]">
-    <h2 className="text-3xl font-bold text-center mb-6">{locale === "es" ? "Sobre Nosotros" : "About Us"}</h2>
+  <section id="about" className="bg-[#66B2D6] py-16 font text-center mb-6 drop-shadow-lg rounded-xl">
+    <h2 className="text-3xl font-bold text-center mb-6 drop-shadow-lg rounded-xl">{locale === "es" ? "Sobre Nosotros" : "About Us"}</h2>
     <p className="text-lg font mb-8">
       {locale === "es" ? (
             <>
@@ -140,9 +133,9 @@ return (
     </p>
   </section>
 
-  <section id="contact" className="bg-[#ffe5f0] py-16 rounded-xl text-[#4A7150]">
+  <section id="contact" className="bg-[#66B2D6] py-16 rounded-xl text-white mb-6 drop-shadow-lg">
     <div className="container mx-auto px-4 max-w-xl text-center">
-      <h2 className="text-3xl font-bold text-center mb-6">{locale === "es" ? "Contáctanos" : "Contact Us"}</h2>
+      <h2 className="text-3xl font-bold text-center mb-6 drop-shadow-lg">{locale === "es" ? "Contáctanos" : "Contact Us"}</h2>
       <form onSubmit={handleContactSubmit} className="space-y-4">
         <input
           type="text"
@@ -151,7 +144,7 @@ return (
           value={form.name}
           onChange={handleChange}
           required
-          className="w-full p-3 rounded border border-[#4A7150] bg-white text-[#4A7150]"
+          className="w-full p-3 rounded border border-[#2f2c79] bg-white text-[#2f2c79]"
         />
         <input
           type="email"
@@ -160,7 +153,7 @@ return (
           value={form.email}
           onChange={handleChange}
           required
-          className="w-full p-3 rounded border border-[#4A7150] bg-white text-[#4A7150]"
+          className="w-full p-3 rounded border border-[#2f2c79] bg-white text-[#2f2c79]"
         />
         <textarea
           name="message"
@@ -169,11 +162,11 @@ return (
           value={form.message}
           onChange={handleChange}
           required
-          className="w-full p-3 rounded border border-[#4A7150] bg-white text-[#4A7150]"
+          className="w-full p-3 rounded border border-[#2f2c79] bg-white text-[#2f2c79]"
         />
         <button
           type="submit"
-          className="w-full bg-[#4A7150] text-white py-3 rounded font-semibold hover:bg-[#3b5d42] transition"
+          className="mt-4 w-full bg-[#1A5E8D] text-[#EAF7FC] py-3 rounded-xl font-medium hover:bg-[#154a72] transition"
         >
           {locale === "es" ? "Enviar mensaje" : "Send Message"}
         </button>
@@ -183,7 +176,7 @@ return (
 </main>
 
 
-    <footer className="bg-white text-[#4A7150] py-6 border-t text-center text-sm">
+    <footer className="bg-white text-[#2f2c79] py-6 border-t text-center text-sm">
       © 2025 Propiedades Premium
     </footer>
   </div>
@@ -191,23 +184,23 @@ return (
 
 function PropertyCard({ property, locale }: { property: Property; locale: "es" | "en" }) {
   return (
-    <Link href={`/properties/${property.id}`} className="w-full max-w-[500px]">
+    <Link href={`/properties/${property.id}`} className="w-full max-w-[600px]">
       <div className="bg-white shadow-lg rounded-2xl overflow-hidden transition hover:shadow-2xl hover:scale-[1.015] duration-300">
         {property.images.length > 0 && (
           // eslint-disable-next-line @next/next/no-img-element
           <img
             src={`${process.env.NEXT_PUBLIC_BACKEND_URL}${property.images[0]}`}
             alt={locale === "es" ? property.title : property.title_en}
-            className="w-full h-64 object-cover"
+            className="w-full h-70 object-cover"
           />
         )}
         <div className="p-6">
-          <h3 className="text-xl font-semibold mb-1 text-[#4A7150]">{locale === "es" ? property.title : property.title_en}</h3>
-          <p className="text-lg text-[#4A7150]">
+          <h3 className="text-2xl font-semibold mb-1 text-[#1A5E8D]">{locale === "es" ? property.title : property.title_en}</h3>
+          <p className="text-lg text-[#3194C6]">
             {locale === "es" ? property.subtitle : property.subtitle_en}
           </p>
-          <p className="text-[#4A7150] font-bold mt-2">${property.price}</p>
-          <button className="mt-4 w-full bg-[#4A7150] text-[#FFE7EC] py-3 rounded-xl font-medium hover:bg-[#3a624e]">
+          <p className="text-[#1A5E8D] font-bold mt-2">${property.price}/noche</p>
+          <button className="mt-4 w-full bg-[#1A5E8D] text-[#EAF7FC] py-3 rounded-xl font-medium hover:bg-[#154a72] transition">
             {locale === "es" ? "Ver detalles" : "View Details"}
           </button>
         </div>

@@ -15,7 +15,7 @@ export function confirmDialog({
 }): Promise<boolean> {
   return new Promise((resolve) => {
     const toastId = toast((t) => (
-      <div className="p-4 space-y-2 text-[#4A7150]">
+      <div className="p-4 space-y-2 text-[#1A5E8D]">
         <p className="text-sm">{message}</p>
         <div className="flex justify-end gap-2 mt-2">
           <button

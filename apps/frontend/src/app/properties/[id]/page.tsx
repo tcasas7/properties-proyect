@@ -73,32 +73,34 @@ export default function PropertyPage() {
 
   
   return (
-    <div className="min-h-screen flex flex-col bg-[#FFF1F2] text-[#4A7150]">
-    <header className="sticky top-0 z-50 bg-[#fdcae1]/80 backdrop-blur-md shadow-sm">
+    <div className="min-h-screen flex flex-col bg-[#A8D8E8] text-2xl font mb-1 text-[#1A5E8D]">
+    <header className="sticky top-0 z-50 bg-[#66B2D6]/80 backdrop-blur-md shadow">
       <div className="flex items-center justify-between px-4 md:px-12 py-4">
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-3 text-sm font-bold text-white drop-shadow-md">
           <button
             onClick={() => router.back()}
-            className="text-[#4A7150] hover:text-[#3a624e] transition"
+            className="hover:text-[#1A5E8D] transition"
             aria-label="Volver"
           >
             <ArrowLeft size={22} />
           </button>
-          <span className="text-sm font-medium text-[#4A7150]">
+          <span className="text-sm font-medium">
             {locale === "es" ? "Volver" : "Back"}
           </span>
         </div>
-        <span className="hover:text-[#3c5945]">PremiumStays</span>
+        <span className="font-bold hover:text-[#1A5E8D] text-white drop-shadow-md transition">
+          PremiumStays
+        </span>
       </div>
     </header>
 
 
       <main className="max-w-screen-xl mx-auto px-4 py-10 space-y-10">
         <div className="mb-8">
-          <h1 className="text-4xl font-bold text-[#4A7150] mb-1">
+          <h1 className="text-4xl font-semibold mb-1 text-[#1A5E8D]">
             {locale === "es" ? property.title : property.title_en}
           </h1>
-          <p className="text-lg text-[#4A7150] font-medium mt-2">
+          <p className="text-2xl text-white drop-shadow-lg font-bold mt-2">
             {locale === "es" ? property.subtitle : property.subtitle_en}
           </p>
         </div>
@@ -147,15 +149,15 @@ export default function PropertyPage() {
               {locale === "es" ? property.description : property.description_en}
             </p>
               {/* Precio destacado */}
-              <p className="text-3xl font-bold text-[#4A7150] mb-2">
-                 <span className="text-xl font-bold" style={{ color: '4A7150' }}>
+              <p className="text-3xl text-[#1A5E8D] font-bold mb-2">
+                 <span className="text-xl font-bold" style={{ color: '1A5E8D' }}>
                       ${property.price} / {locale === "es" ? t.night : t.night}
                     </span>
               </p>
 
               {/* Calendario */}
               <div className="space-y-6">
-                <h3 className="font-semibold mb-3 text-[#4A7150] text-lg">{t.selectStay}</h3>
+                <h3 className="font-semibold mb-3 text-[#1A5E8D] text-lg">{t.selectStay}</h3>
                 <div className="flex justify-center">
                   <div className="bg-[#fefefe] p-6 rounded-2xl shadow-md border w-full max-w-md">
                     <BookingCard
@@ -169,10 +171,10 @@ export default function PropertyPage() {
                 </div>
                 {/* Total */}
                 {startDate && endDate && (
-                  <div className="text-md mt-4 text-[#4A7150] font-medium">
+                  <div className="text-md mt-4 text-[#1A5E8D] font-medium">
                     {totalNights}{" "}
                     {totalNights === 1 ? t.night : t.nights} · {t.total}{" "}
-                    <span className="text-xl font-bold" style={{ color: '4A7150' }}>
+                    <span className="text-xl font-bold" style={{ color: '1A5E8D' }}>
                       ${totalPrice} USD
                     </span>
                   </div>
@@ -184,7 +186,7 @@ export default function PropertyPage() {
             <Button
               disabled={!startDate || !endDate}
               onClick={handleBooking}
-              className="mt-5 w-full bg-[#4A7150] text-[#FFE7EC] py-6 text-xl rounded-2xl font-semibold hover:bg-[#3a624e] transition-all duration-200"
+              className="mt-5 w-full bg-[#1A5E8D] text-[#EAF7FC] py-6 text-xl rounded-2xl font-semibold hover:bg-[#154a72] transition-all duration-200"
             >
               {t.bookWhatsApp}
             </Button>
@@ -194,7 +196,7 @@ export default function PropertyPage() {
 
       {property.latitude && property.longitude && (
         <div className="mt-10">
-          <h3 className="text-lg font-semibold mb-4 text-[#4A7150]">{t.mapTitle}</h3>
+          <h3 className="text-lg font-semibold mb-4 text-[#1A5E8D]">{t.mapTitle}</h3>
           <iframe
             width="100%"
             height="300"
@@ -204,8 +206,7 @@ export default function PropertyPage() {
             src={`https://maps.google.com/maps?q=${property.latitude},${property.longitude}&z=15&output=embed`}
           ></iframe>
           {/* Dirección abajo del mapa */}
-          <p className="text-lg font-semibold mb-4 text-[#4A7150] mt-4">
-            
+          <p className="text-lg font-semibold mb-4 text-[#1A5E8D] mt-4">
             {t.addressLabel} {property.location}
           </p>
         </div>

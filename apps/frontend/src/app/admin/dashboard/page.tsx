@@ -11,6 +11,7 @@ import CalendarManager from '@/components/CalendarManager';
 import Link from 'next/link';
 import { confirmDialog } from '@/components/ConfrimDialog';
 import { jwtDecode }  from 'jwt-decode';
+import { geocodeAddress } from '@/lib/geocode';
 
 function isTokenExpired(token: string): boolean {
   try {
@@ -42,18 +43,21 @@ export default function Dashboard() {
     subtitle: '',
     subtitle_en: '',
     location: '',
-    latitude: '',
-    longitude: '',
+    latitude: 0,
+    longitude: 0,
     price: 0,
     description: '',
     description_en: '',
     country: '',
+    address: '',
   });
   const [files, setFiles] = useState<FileList | null>(null);
   const imageInputRefs = useRef<{ [key: string]: HTMLInputElement | null }>({});
   const [editingId, setEditingId] = useState<number | null>(null);
   const [editForm, setEditForm] = useState<Partial<Property>>({});
   const router = useRouter();
+  const [isEditMode] = useState(false);
+
   
   useEffect(() => {
     fetchProperties();
@@ -70,6 +74,29 @@ export default function Dashboard() {
       router.push('/admin/login');
     }
   }, [router]);
+
+useEffect(() => {
+  if (!form.address || !isEditMode) return;
+
+  const delay = setTimeout(() => {
+    geocodeAddress(form.address)
+      .then(({ lat, lng }) => {
+        setForm((prev) => ({
+          ...prev,
+          latitude: lat,
+          longitude: lng,
+        }));
+      })
+      .catch((err) => {
+        console.warn("No se pudo obtener la ubicación automáticamente:", err.message);
+      });
+  }, 700);
+
+  return () => clearTimeout(delay);
+}, [form.address, isEditMode]);
+
+
+
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
@@ -98,8 +125,8 @@ export default function Dashboard() {
     formData.append('subtitle', form.subtitle);
     formData.append('subtitle_en', form.subtitle_en );
     formData.append('location', form.location);
-    formData.append('latitude', form.latitude);
-    formData.append('longitude', form.longitude);
+    formData.append('latitude', String(form.latitude));
+    formData.append('longitude', String(form.longitude));
     formData.append('price', String(form.price));
     formData.append('description', form.description);
     formData.append('description_en', form.description_en);
@@ -115,7 +142,7 @@ export default function Dashboard() {
     try {
       await api.post('/properties', formData);
       toast.success('Propiedad creada con éxito');
-      setForm({ title: '', subtitle: '', location: '', price: 0, description: '', country: '', latitude: '', longitude: '', title_en: '', subtitle_en: '', description_en: '' });
+      setForm({ title: '', subtitle: '', location: '', price: 0, description: '', country: '', latitude: 0, longitude: 0, title_en: '', subtitle_en: '', description_en: '', address: '' });
       setFiles(null);
       fetchProperties();
     } catch (err) {
@@ -132,15 +159,15 @@ export default function Dashboard() {
 
  return (
   <>
-    <header className="w-full bg-[#ffe5f0] px-6 py-4 flex items-center justify-between shadow">
+    <header className="w-full bg-[#66B2D6]/80 px-6 py-4 flex items-center justify-between shadow">
     
       <Link href="/">
-        <button className="bg-[#4A7150] text-white px-4 py-2 rounded hover:bg-[#3a624e]">
+        <button className="bg-[#1A5E8D] text-[#EAF7FC] px-5 py-2 rounded-full text-base font-medium shadow hover:bg-[#154a72] transition">
           Home
         </button>
       </Link>
 
-      <h1 className="text-2xl font-bold text-[#4A7150] text-center">
+      <h1 className="text-white text-2xl font-bold drop-shadow-lg text-center">
         Admin Dashboard
       </h1>
 
@@ -151,31 +178,31 @@ export default function Dashboard() {
         Cerrar sesión
       </button>
     </header>
-  <main className="p-6 space-y-8 bg-[#FFF1F2] min-h-screen">
+  <main className="p-6 space-y-8 bg-[#A8D8E8] min-h-screen">
 
       {/* Formulario de creación */}
-      <form onSubmit={handleSubmit} className="space-y-4 bg-[#ffe5f0] p-6 rounded-xl shadow">
-        <input name="title" value={form.title} onChange={handleChange} placeholder="Título" className="w-full p-2 border border-[#4A7150]/30 rounded focus:ring-[#4A7150] focus:border-[#4A7150]" required />
+      <form onSubmit={handleSubmit} className="space-y-4 bg-white p-6 rounded-xl shadow">
+        <input name="title" value={form.title} onChange={handleChange} placeholder="Título" className="w-full p-2 border border-[#1A5E8D]/30 rounded focus:ring-[#1A5E8D] focus:border-[#1A5E8D] bg-white text-[#1A5E8D] placeholder-[#1A5E8D]/50" required />
         <input
           name="title_en"
           value={form.title_en}
           onChange={handleChange}
           placeholder="Title in English"
-          className="w-full p-2 border border-[#4A7150]/30 rounded focus:ring-[#4A7150] focus:border-[#4A7150]"
+          className="w-full p-2 border border-[#1A5E8D]/30 rounded focus:ring-[#1A5E8D] focus:border-[#1A5E8D] bg-white text-[#1A5E8D] placeholder-[#1A5E8D]/50"
         />  
         <input
           name="subtitle"
           value={form.subtitle}
           onChange={handleChange}
           placeholder="Subtítulo (ej: ideal para parejas, 3 personas)"
-          className="w-full p-2 border border-[#4A7150]/30 rounded focus:ring-[#4A7150] focus:border-[#4A7150]"
+          className="w-full p-2 border border-[#1A5E8D]/30 rounded focus:ring-[#1A5E8D] focus:border-[#1A5E8D] bg-white text-[#1A5E8D] placeholder-[#1A5E8D]/50"
         />
         <input
           name="subtitle_en"
           value={form.subtitle_en}
           onChange={handleChange}
           placeholder="Subtitle in English"
-          className="w-full p-2 border border-[#4A7150]/30 rounded focus:ring-[#4A7150] focus:border-[#4A7150]"
+          className="w-full p-2 border border-[#1A5E8D]/30 rounded focus:ring-[#1A5E8D] focus:border-[#1A5E8D] bg-white text-[#1A5E8D] placeholder-[#1A5E8D]/50"
         />
         {/*<input name="location" value={form.location} onChange={handleChange} placeholder="Ubicación" className="w-full p-2 border rounded" required />*/}
         <input
@@ -191,7 +218,7 @@ export default function Dashboard() {
             }));
           }}
           placeholder="Precio"
-          className="w-full p-2 border border-[#4A7150]/30 rounded focus:ring-[#4A7150] focus:border-[#4A7150]"
+          className="w-full p-2 border border-[#1A5E8D]/30 rounded focus:ring-[#1A5E8D] focus:border-[#1A5E8D]"
         />
         <textarea name="description" value={form.description} onChange={handleChange} placeholder="Descripción" className="w-full p-2 border rounded" rows={4} />
         <textarea
@@ -199,14 +226,14 @@ export default function Dashboard() {
           value={form.description_en}
           onChange={handleChange}
           placeholder="Description in English"
-          className="w-full p-2 border border-[#4A7150]/30 rounded focus:ring-[#4A7150] focus:border-[#4A7150]"
+          className="w-full p-2 border border-[#1A5E8D]/30 rounded focus:ring-[#1A5E8D] focus:border-[#1A5E8D]"
           rows={6}
         />
         <select
           name="country"
           value={form.country}
           onChange={handleChange}
-          className="w-full p-2 border border-[#4A7150]/30 rounded bg-[#FFF1F2] text-[#4A7150] focus:ring-[#4A7150] focus:border-[#4A7150] appearance-none"
+          className="w-full p-2 border border-[#1A5E8D]/30 rounded bg-white text-[#1A5E8D] focus:ring-[#1A5E8D] focus:border-[#1A5E8D] appearance-none"
           required
         >
           <option value="">Seleccioná un país</option>
@@ -219,7 +246,7 @@ export default function Dashboard() {
           value={form.location}
           onChange={handleChange}
           placeholder="Ubicación / Dirección"
-          className="w-full p-2 border border-[#4A7150]/30 rounded focus:ring-[#4A7150] focus:border-[#4A7150]"
+          className="w-full p-2 border border-[#1A5E8D]/30 rounded focus:ring-[#1A5E8D] focus:border-[#1A5E8D]"
         />
 
         <div className="space-y-2">
@@ -237,11 +264,11 @@ export default function Dashboard() {
           <input type="file" accept="image/*" onChange={(e) => {
             const file = e.target.files?.[0];
             if (file) setFiles(new FileListProxy([...(files ? Array.from(files) : []), file]));
-          }} className="w-full p-2 border border-[#4A7150]/30 rounded focus:ring-[#4A7150] focus:border-[#4A7150]" />
+          }} className="w-full p-2 border border-[#1A5E8D]/30 rounded focus:ring-[#1A5E8D] focus:border-[#1A5E8D]" />
         </div>
         <button
           type="submit"
-          className="bg-[#4A7150] text-white px-4 py-2 rounded hover:bg-[#3a624e]"
+          className="bg-[#1A5E8D] text-white px-4 py-2 rounded hover:bg-[#154a72]"
         >
           Crear Propiedad
         </button>
@@ -249,7 +276,7 @@ export default function Dashboard() {
       {/* Lista de propiedades */}
       <div className="space-y-4">
         {properties.map((p) => (
-          <div key={p.id} className="border p-4 rounded bg-[#ffe5f0] shadow-sm">
+          <div key={p.id} className="border p-4 rounded bg-white shadow-sm">
             <div className="flex justify-between items-start">
               {editingId === p.id ? (
                 <div className="space-y-2 w-full">
@@ -265,13 +292,13 @@ export default function Dashboard() {
                     value={editForm.subtitle ?? ""}
                     onChange={handleEditChange}
                     placeholder="Subtítulo (ej: ideal para parejas, 3 personas)"
-                    className="w-full p-2 border border-[#4A7150]/30 rounded focus:ring-[#4A7150] focus:border-[#4A7150]"
+                   className="w-full p-2 border border-[#1A5E8D]/30 rounded focus:ring-[#1A5E8D] focus:border-[#1A5E8D] bg-white text-[#1A5E8D] placeholder-[#1A5E8D]/50"
                   />
                   <input
                     name="subtitle_en"
                     value={editForm.subtitle_en ?? ""}
                     onChange={handleEditChange}
-                    className="w-full p-2 border border-[#4A7150]/30 rounded focus:ring-[#4A7150] focus:border-[#4A7150]"
+                    className="w-full p-2 border border-[#1A5E8D]/30 rounded focus:ring-[#1A5E8D] focus:border-[#1A5E8D] bg-white text-[#1A5E8D] placeholder-[#1A5E8D]/50"
                   />
                  <input
                     name="price"
@@ -284,20 +311,20 @@ export default function Dashboard() {
                         price: value === '' ? 0 : Number(value),
                       }));
                     }}
-                    className="w-full p-2 border border-[#4A7150]/30 rounded focus:ring-[#4A7150] focus:border-[#4A7150]"
+                    className="w-full p-2 border border-[#1A5E8D]/30 rounded focus:ring-[#1A5E8D] focus:border-[#1A5E8D]"
                   />
                   <textarea
                     name="description"
                     value={editForm.description}
                     onChange={handleEditChange}
-                    className="w-full p-2 border border-[#4A7150]/30 rounded focus:ring-[#4A7150] focus:border-[#4A7150]"
+                    className="w-full p-2 border border-[#1A5E8D]/30 rounded focus:ring-[#1A5E8D] focus:border-[#1A5E8D]"
                     rows={8}
                   />
                   <textarea
                     name="description_en"
                     value={editForm.description_en ?? ""}
                     onChange={handleEditChange}
-                    className="w-full p-2 border border-[#4A7150]/30 rounded focus:ring-[#4A7150] focus:border-[#4A7150]"
+                    className="w-full p-2 border border-[#1A5E8D]/30 rounded focus:ring-[#1A5E8D] focus:border-[#1A5E8D]"
                     rows={8}
                   />
                   <input
@@ -322,7 +349,7 @@ export default function Dashboard() {
                         toast.error('Error al agregar imágenes');
                       }
                     }}
-                    className="w-full p-2 border border-[#4A7150]/30 rounded focus:ring-[#4A7150] focus:border-[#4A7150]"
+                    className="w-full p-2 border border-[#1A5E8D]/30 rounded focus:ring-[#1A5E8D] focus:border-[#1A5E8D]"
                   />
 
                   <input
@@ -330,7 +357,7 @@ export default function Dashboard() {
                   value={editForm.location ?? ''}
                   onChange={handleEditChange}
                   placeholder="Ubicación / Dirección"
-                  className="w-full p-2 border border-[#4A7150]/30 rounded focus:ring-[#4A7150] focus:border-[#4A7150]"
+                  className="w-full p-2 border border-[#1A5E8D]/30 rounded focus:ring-[#1A5E8D] focus:border-[#1A5E8D]"
                 />
                 <input
                   name="latitude"
@@ -344,7 +371,7 @@ export default function Dashboard() {
                     }));
                   }}
                   placeholder="Latitud (opcional)"
-                  className="w-full p-2 border border-[#4A7150]/30 rounded focus:ring-[#4A7150] focus:border-[#4A7150]"
+                  className="w-full p-2 border border-[#1A5E8D]/30 rounded focus:ring-[#1A5E8D] focus:border-[#1A5E8D]"
                 />
 
                 <input
@@ -359,7 +386,7 @@ export default function Dashboard() {
                     }));
                   }}
                   placeholder="Longitud (opcional)"
-                  className="w-full p-2 border border-[#4A7150]/30 rounded focus:ring-[#4A7150] focus:border-[#4A7150]"
+                  className="w-full p-2 border border-[#1A5E8D]/30 rounded focus:ring-[#1A5E8D] focus:border-[#1A5E8D]"
                 />
                   <div className="flex gap-2 mt-2">
                     <button onClick={async () => {
@@ -376,7 +403,7 @@ export default function Dashboard() {
                         toast.dismiss();
                         toast.error('Error al actualizar');
                       }
-                    }}className="bg-[#4A7150] text-white px-3 py-1 rounded text-sm hover:bg-[#3a624e]">Guardar</button>
+                    }}className="bg-[#154a72] text-white px-3 py-1 rounded text-sm hover:bg-[#154a72]">Guardar</button>
                     <button onClick={() => setEditingId(null)} className="text-red-500 text-sm hover:underline">Cancelar</button>
                   </div>
                 </div>
@@ -394,9 +421,12 @@ export default function Dashboard() {
                       setEditForm({
                         ...p,
                         subtitle: p.subtitle ?? "",
+                        subtitle_en: p.subtitle_en ?? "",
+                        latitude: p.latitude ?? 0,
+                        longitude: p.longitude ?? 0,
                       });
                     }}
-                    className="mt-2 block text-[#4A7150] text-sm bg-[#FFD6E0] px-3 py-1 rounded hover:bg-[#e4717a]"
+                    className="mt-2 block text-white text-sm bg-[#1A5E8D] px-3 py-1 rounded hover:bg-[#154a72]"
                     >
                      Editar
                   </button>

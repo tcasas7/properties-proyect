@@ -61,50 +61,43 @@ html {
 .react-datepicker__day--selected,
 .react-datepicker__day--in-selecting-range,
 .react-datepicker__day--in-range {
-  background-color: #4A7150 !important;
+  background-color: #1A5E8D !important;
   color: white !important;
   border-radius: 0.375rem;
 }
 
 .react-datepicker__day:hover {
-  background-color: #6b8c65;
+  background-color: #3194C6 !important;
 }
 
-.react-datepicker__day--selected,
-.react-datepicker__day--in-range,
 .react-datepicker__day--keyboard-selected {
-  background-color: #4A7150 !important;
+  background-color: #1A5E8D !important;
   color: white !important;
   border-radius: 0.5rem !important;
 }
 
-.react-datepicker__day:hover {
-  background-color: #6b8c65 !important;
-}
-
-
 .custom-calendar .rdp {
-  --rdp-accent-color: #4A7150;
-  --rdp-background-color: #FFF1F2;
+  --rdp-accent-color: #1A5E8D;
+  --rdp-background-color: #A8D8E8;
   --rdp-selected-color: #ffffff;
 }
 
 .custom-calendar .rdp-day_selected {
   font-weight: bold;
-  background-color: #4A7150 !important;
+  background-color: #1A5E8D !important;
   color: white !important;
 }
 
 .custom-calendar .rdp-day_range_start,
 .custom-calendar .rdp-day_range_end {
-  background-color: #4A7150 !important;
+  background-color: #1A5E8D !important;
   color: white !important;
 }
 
 .custom-calendar .rdp-day_range_middle {
   font-weight: 600;
-  background-color: #FFF1F2 !important;
-  color: #4A7150 !important;
+  background-color: #A8D8E8 !important;
+  color: #1A5E8D !important;
 }
 
 .custom-calendar .rdp-day_disabled {
@@ -115,7 +108,7 @@ html {
 /* Botón de navegación */
 .custom-calendar .rdp-button_previous,
 .custom-calendar .rdp-button_next {
-  color: #4A7150 !important;
+  color: #1A5E8D !important;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -124,8 +117,8 @@ html {
 /* Ícono SVG */
 .custom-calendar .rdp-button_previous svg,
 .custom-calendar .rdp-button_next svg {
-  stroke: #4A7150 !important;
-  fill: #4A7150 !important;
+  stroke: #1A5E8D !important;
+  fill: #1A5E8D !important;
   width: 1.25rem;
   height: 1.25rem;
 }
@@ -144,10 +137,9 @@ html {
   color: #a0aec0;
 }
 
-/* Polygon interno (flechita real) */
 .custom-calendar .rdp-button_previous polygon,
 .custom-calendar .rdp-button_next polygon {
-  fill: #4A7150 !important;
+  fill: #1A5E8D !important;
 }
 
 @keyframes fadeIn {
@@ -160,15 +152,15 @@ html {
 }
 
 .custom-calendar td.rdp-day.rdp-today:not(.rdp-day_selected) button {
-  color: #4A7150 !important;
-  border: 2px solid #4A7150 !important;
-  background-color: #FFF1F2 !important;
+  color: #1A5E8D !important;
+  border: 2px solid #1A5E8D !important;
+  background-color: #A8D8E8 !important;
   font-weight: bold !important;
 }
 
 .custom-calendar td.rdp-day.rdp-today.rdp-day_selected button {
   color: white !important;
-  background-color: #4A7150 !important;
+  background-color: #1A5E8D !important;
 }
 
 .custom-calendar .rdp-week {
@@ -176,24 +168,22 @@ html {
 }
 
 .custom-calendar .rdp-caption_label {
+  font-size: 1.30rem;
   font-weight: 600;
+  color: #1A5E8D;
 }
-
 
 .custom-calendar .rdp-day {
-  width: 4rem;  /* 48px o más si querés más grande */
+  width: 4rem;
   height: 3.5rem;
-  font-size: 1rem; /* text-base */
-}
-
-.custom-calendar .rdp-caption_label {
-  font-size: 1.30rem; /* text-xl */
-  font-weight: 600;
+  font-size: 1rem;
 }
 
 .custom-calendar .rdp-head_cell {
-  font-size: 0.875rem; /* text-sm */
+  font-size: 0.875rem;
+  color: #1A5E8D;
 }
+
 
 :root {
   --radius: 0.625rem;

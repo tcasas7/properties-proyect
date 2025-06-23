@@ -16,6 +16,8 @@ export default function CalendarManager({ propertyId, pricePerNight }: Props) {
   const [dates, setDates] = useState<CalendarType[]>([]);
   const [selection, setSelection] = useState<{ from?: Date; to?: Date }>({});
   const [isUnblockMode, setIsUnblockMode] = useState(false);
+  const [hoveredDate, setHoveredDate] = useState<Date | undefined>(undefined);
+
 
   useEffect(() => {
     fetchDates();
@@ -79,6 +81,19 @@ export default function CalendarManager({ propertyId, pricePerNight }: Props) {
   };
 
   const handleDayClick = async (date: Date) => {
+    
+    const isBlocked = dates.some(
+      (d) => new Date(d.date).toDateString() === date.toDateString()
+    );
+
+    if (!isUnblockMode && isBlocked) {
+      return;
+    }
+
+    if (isUnblockMode && !isBlocked) {
+      return;
+    }
+    
     if (!selection.from) {
       setSelection({ from: date });
       return;
@@ -108,6 +123,14 @@ export default function CalendarManager({ propertyId, pricePerNight }: Props) {
     setSelection({});
   };
 
+  const pendingRange =
+    selection.from && hoveredDate
+       ? {
+         from: selection.from < hoveredDate ? selection.from : hoveredDate,
+         to: selection.from > hoveredDate ? selection.from : hoveredDate,
+        }
+      : undefined;
+
   const getBlockedDates = () => {
     return dates
       .map((d) => {
@@ -117,11 +140,16 @@ export default function CalendarManager({ propertyId, pricePerNight }: Props) {
       .filter((d) => !isNaN(d.getTime()));
   };
 
-  return (
+  const rangeClassName = isUnblockMode
+  ? "bg-[#E2F2F9] text-[#1A5E8D] font-semibold border border-dashed border-[#1A5E8D]"
+  : "bg-[#A8D8E8] text-[#1A5E8D] font-semibold";
+
+
+return (
   <div className="mt-4 custom-calendar">
     <div className="flex items-center justify-between mb-2">
-      <h4 className="font-semibold text-[#4A7150]">Calendario de disponibilidad</h4>
-      <label className="flex items-center gap-2 text-sm text-gray-700">
+      <h4 className="font-semibold text-[#1A5E8D]">Calendario de disponibilidad</h4>
+      <label className="flex items-center gap-2 text-sm text-[#1A5E8D]">
         <input
           type="checkbox"
           checked={isUnblockMode}
@@ -134,32 +162,39 @@ export default function CalendarManager({ propertyId, pricePerNight }: Props) {
       </label>
     </div>
 
-   <DayPicker
-  mode="single"
-  selected={undefined}
-  onDayClick={handleDayClick}
-  numberOfMonths={1}
-  pagedNavigation
-  modifiers={{
-    blocked: getBlockedDates(),
-  }}
-  modifiersClassNames={{
-    ...baseCalendarModifiersClassNames,
-    blocked: "unavailable-date",
-    selected: "text-[#4A7150] font-bold border border-[#4A7150] rounded-full",
-  }}
-  classNames={baseCalendarClassName}
-/>
+    <DayPicker
+      mode="single"
+      selected={undefined}
+      onDayClick={handleDayClick}
+      onDayMouseEnter={(date) => setHoveredDate(date)}
+      onDayMouseLeave={() => setHoveredDate(undefined)}
+      numberOfMonths={1}
+      pagedNavigation
+      modifiers={{
+        blocked: getBlockedDates(),
+        pendingRange, 
+      }}
+      modifiersClassNames={{
+        ...baseCalendarModifiersClassNames,
+        blocked: "unavailable-date",
+        pendingRange: rangeClassName,
+        selected: "bg-[#1A5E8D] text-white font-bold",
+      }}
+      classNames={{
+        ...baseCalendarClassName,
+        day_selected: "text-white bg-[#1A5E8D] font-bold",
+      }}
+    />
 
 
     <style>{`
-    .unavailable-date {
-      background: transparent;
-      color: #4A7150;
-      opacity: 0.5;
-      text-decoration: line-through;
-      font-weight: normal;
-    }
+      .unavailable-date {
+        background: transparent;
+        color: #1A5E8D;
+        opacity: 0.5;
+        text-decoration: line-through;
+        font-weight: normal;
+      }
     `}</style>
   </div>
 );
