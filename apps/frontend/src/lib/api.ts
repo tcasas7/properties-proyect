@@ -2,7 +2,7 @@ import axios from 'axios';
 
 const api = axios.create({
   baseURL: process.env.NEXT_PUBLIC_BACKEND_URL,
-  withCredentials: false, // cambiar a true si usás cookies en el futuro
+  withCredentials: true, 
 });
 
 
@@ -16,7 +16,7 @@ api.interceptors.request.use((config) => {
   return config;
 });
 
-// Interceptor de respuesta: si hay 401, redirige a login
+
 api.interceptors.response.use(
   (response) => response,
   (error) => {

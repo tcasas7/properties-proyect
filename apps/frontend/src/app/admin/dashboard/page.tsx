@@ -96,8 +96,6 @@ useEffect(() => {
 }, [form.address, isEditMode]);
 
 
-
-
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
   ) => {
@@ -159,24 +157,43 @@ useEffect(() => {
 
  return (
   <>
-    <header className="w-full bg-[#66B2D6]/80 px-6 py-4 flex items-center justify-between shadow">
-    
+<header className="w-full bg-[#66B2D6]/80 px-4 py-4 shadow">
+  <div className="flex flex-col items-center gap-3 md:flex-row md:justify-between md:gap-0 md:hidden">
+    <h1 className="text-white text-xl md:text-2xl font-bold drop-shadow-lg text-center mt-2 md:mt-0">
+      Admin Dashboard
+    </h1>
+    <div className="flex gap-3 w-full justify-center md:justify-start">
       <Link href="/">
-        <button className="bg-[#1A5E8D] text-[#EAF7FC] px-5 py-2 rounded-full text-base font-medium shadow hover:bg-[#154a72] transition">
+        <button className="bg-[#1A5E8D] text-[#EAF7FC] px-4 py-1.5 rounded-full text-sm font-medium shadow hover:bg-[#154a72] transition">
           Home
         </button>
       </Link>
-
-      <h1 className="text-white text-2xl font-bold drop-shadow-lg text-center">
-        Admin Dashboard
-      </h1>
-
       <button
         onClick={handleLogout}
-        className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600"
+        className="bg-red-600 text-white px-4 py-1.5 rounded-full text-sm font-medium shadow hover:bg-red-700 transition"
       >
         Cerrar sesión
       </button>
+  </div>    
+</div>
+  <div className="hidden md:flex items-center justify-between">
+    <Link href="/">
+      <button className="bg-[#1A5E8D] text-[#EAF7FC] px-5 py-2 rounded-full text-base font-medium shadow hover:bg-[#154a72] transition">
+        Home
+      </button>
+    </Link>
+
+    <h1 className="text-white text-2xl font-bold drop-shadow-lg text-center">
+      Admin Dashboard
+    </h1>
+
+      <button
+        onClick={handleLogout}
+        className="bg-red-600 text-white px-4 py-1.5 rounded-full text-sm font-medium shadow hover:bg-red-700 transition"
+      >
+        Cerrar sesión
+      </button>
+</div>
     </header>
   <main className="p-6 space-y-8 bg-[#A8D8E8] min-h-screen">
 
@@ -422,8 +439,9 @@ useEffect(() => {
                         ...p,
                         subtitle: p.subtitle ?? "",
                         subtitle_en: p.subtitle_en ?? "",
-                        latitude: p.latitude ?? 0,
-                        longitude: p.longitude ?? 0,
+                        latitude: undefined,
+                        longitude: undefined,
+
                       });
                     }}
                     className="mt-2 block text-white text-sm bg-[#1A5E8D] px-3 py-1 rounded hover:bg-[#154a72]"
@@ -464,7 +482,7 @@ useEffect(() => {
               {p.images.map((imgUrl, idx) => (
                 <div key={idx} className="relative group">
                   <img
-                    src={`${process.env.NEXT_PUBLIC_BACKEND_URL}${imgUrl}`}
+                    src={`${process.env.NEXT_PUBLIC_BACKEND_URL?.replace(/\/$/, "")}${imgUrl}`}
                     alt={`imagen-${idx}`}
                     className="w-32 h-24 object-cover rounded cursor-pointer"
                     onClick={() => imageInputRefs.current[`${p.id}-${idx}`]?.click()}

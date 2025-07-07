@@ -16,6 +16,7 @@ import BookingCard from "@/components/BookingCard";
 import { useLocale } from "@/context/LanguageContext";
 import propertyTranslations from "@/translations/property";
 
+
 export default function PropertyPage() {
   const { id } = useParams();
   const router = useRouter();
@@ -45,10 +46,11 @@ export default function PropertyPage() {
   }, [id]);
 
   useEffect(() => {
-    if (instanceRef.current) {
-      instanceRef.current.moveToIdx(selectedIndex);
+    if (galleryOpen && instanceRef.current) {
+      instanceRef.current.moveToIdx(selectedIndex, true); 
     }
-  }, [instanceRef, selectedIndex]);
+  }, [galleryOpen, instanceRef, selectedIndex]);
+
 
   useEffect(() => {
     document.body.style.overflow = galleryOpen ? "hidden" : "";
@@ -78,7 +80,7 @@ export default function PropertyPage() {
       <div className="flex items-center justify-between px-4 md:px-12 py-4">
         <div className="flex items-center gap-3 text-sm font-bold text-white drop-shadow-md">
           <button
-            onClick={() => router.back()}
+            onClick={() => router.push("/")}
             className="hover:text-[#1A5E8D] transition"
             aria-label="Volver"
           >
@@ -93,7 +95,6 @@ export default function PropertyPage() {
         </span>
       </div>
     </header>
-
 
       <main className="max-w-screen-xl mx-auto px-4 py-10 space-y-10">
         <div className="mb-8">
@@ -115,8 +116,9 @@ export default function PropertyPage() {
               }}
             >
               <Image
-                src={`${process.env.NEXT_PUBLIC_BACKEND_URL}${property.images[0]}`}
+                src={`${process.env.NEXT_PUBLIC_BACKEND_URL?.replace(/\/$/, "")}${property.images[0]}`}
                 alt={property.title}
+                key={galleryOpen ? `open-${selectedIndex}` : "closed"}
                 width={1200}
                 height={800}
                 className="w-full h-full object-cover"
@@ -128,7 +130,7 @@ export default function PropertyPage() {
                 {property.images.map((img, i) => (
                   <Image
                     key={i}
-                    src={`${process.env.NEXT_PUBLIC_BACKEND_URL}${img}`}
+                    src={`${process.env.NEXT_PUBLIC_BACKEND_URL?.replace(/\/$/, "")}${img}`}
                     alt={`img-${i}`}
                     width={120}
                     height={80}
@@ -245,7 +247,7 @@ export default function PropertyPage() {
               >
                 <div className="relative w-full h-full">
                   <Image
-                    src={`${process.env.NEXT_PUBLIC_BACKEND_URL}${img}`}
+                    src={`${process.env.NEXT_PUBLIC_BACKEND_URL?.replace(/\/$/, "")}${img}`}
                     alt={`img-${i}`}
                     fill
                     className="object-contain"

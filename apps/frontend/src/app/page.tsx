@@ -57,13 +57,13 @@ return (
   <div className="relative z-10 flex flex-col items-center justify-center h-full text-center px-4">
     <h1 className="text-2xl md:text-5xl font-bold text-white drop-shadow-2xl mb-3 tracking-normal leading-snug">
       {locale === "es"
-        ? "Encontrá tu próxima estadía de lujo"
+        ? "Encuentra tu próxima estadía en Mar del Plata"
         : "Find your next luxury stay"}
     </h1>
 
-    <p className="text-base md:text-2xl text-white/90 drop-shadow-2xl mb-4">
+    <p className="text-base md:text-4xl text-white/90 drop-shadow-2xl mb-4">
       {locale === "es"
-        ? "Propiedades seleccionadas en Mar del Plata"
+        ? "PROPIEDADES ZONA CENTRO - GUEMES"
         : "Selected properties in Mar del Plata"}
     </p>
 
@@ -83,102 +83,238 @@ return (
   <main className="w-full max-w-screen-xl mx-auto px-4 py-8 space-y-16">
 
   <section id="argentina">
-    <h2 className="text-3xl font-bold text-center mb-6 drop-shadow-lg">{locale === "es" ? "Propiedades en Mar del Plata" : "Properties in Mar del Plata"}</h2>
-    <div className="flex flex-wrap justify-center gap-10">
-      {argentina.map((prop) => (
-        <PropertyCard key={prop.id} property={prop} locale={locale} />
+<div className="flex justify-center gap-8 flex-wrap">
+  {argentina.map((p, index) => (
+    <div key={p.id} className="flex flex-col items-center w-full max-w-[600px]">
+      <h2 className="text-2xl sm:text-3xl font-bold text-center mb-4 drop-shadow-lg">
+        {locale === "es"
+          ? index === 0
+            ? "ALTOS DE COLON"
+            : "ALTOS DE ALSINA"
+          : index === 0
+            ? "UPPER COLON"
+            : "UPPER ALSINA"}
+      </h2>
+      <PropertyCard property={p} locale={locale} />
+    </div>
+  ))}
+</div>
+
+  </section>
+
+  <section className="bg-[#66B2D6] text-white py-16 px-4 mb-6 drop-shadow-lg rounded-xl">
+    <h2 className="text-3xl md:text-4xl font-bold text-center mb-12 drop-shadow-md">
+      {locale === "es" ? "¿Por qué elegirnos?" : "Why choose us?"}
+    </h2>
+
+    <div className="grid md:grid-cols-2 gap-10 max-w-5xl mx-auto">
+      {[
+        {
+          es: {
+            title: "Experiencia comprobada",
+            desc: "Elegir nuestros departamentos entre muchos anuncios similares es apostar por un servicio que lleva años funcionando con éxito.",
+          },
+          en: {
+            title: "Proven Experience",
+            desc: "Choosing our apartments among many listings means trusting a service that has been running successfully for years.",
+          },
+        },
+        {
+          es: {
+            title: "Atención personalizada",
+            desc: "Nos encanta brindar un trato directo y humano, para que puedas alquilar con total confianza.",
+          },
+          en: {
+            title: "Personalized Attention",
+            desc: "We love offering direct, human interaction so you can rent with complete confidence.",
+          },
+        },
+        {
+          es: {
+            title: "Gestión directa, sin intermediarios",
+            desc: "Somos los propietarios, por lo que nos ocupamos personalmente antes, durante y después de tu estancia.",
+          },
+          en: {
+            title: "Direct Management, No Middlemen",
+            desc: "We are the owners, personally taking care of everything before, during, and after your stay.",
+          },
+        },
+        {
+          es: {
+            title: "Ubicación estratégica",
+            desc: "Nuestras propiedades están ubicadas en zonas clave para una estadía placentera y cómoda.",
+          },
+          en: {
+            title: "Strategic Location",
+            desc: "Our properties are located in key areas to ensure a pleasant and comfortable stay.",
+          },
+        },
+        {
+          es: {
+            title: "Reserva simple y segura",
+            desc: "El proceso es transparente y fácil, para que solo te concentres en disfrutar tu viaje.",
+          },
+          en: {
+            title: "Simple & Secure Booking",
+            desc: "The process is transparent and easy, so you can focus solely on enjoying your trip.",
+          },
+        },
+      ].map((item, idx) => (
+<div key={idx} className="flex gap-4 items-start">
+  <div className="w-10 h-10 min-w-[2.5rem] min-h-[2.5rem] flex items-center justify-center rounded-full bg-white text-[#66B2D6] font-bold text-base shadow-md">
+    {idx + 1}
+  </div>
+  <div className="flex-1">
+    <h3 className="text-xl font-bold mb-1 drop-shadow-sm">
+      {locale === "es" ? item.es.title : item.en.title}
+    </h3>
+    <p className="text-base drop-shadow-sm leading-relaxed sm:text-justify max-w-prose">
+      {locale === "es" ? item.es.desc : item.en.desc}
+    </p>
+  </div>
+</div>
+
       ))}
     </div>
   </section>
 
 
+ <section id="about" className="bg-[#66B2D6] text-white py-16 px-4 mb-6 drop-shadow-lg rounded-xl">
+  <h2 className="text-3xl md:text-4xl font-bold text-center mb-12 drop-shadow-md">
+    {locale === "es" ? "Sobre Nosotros" : "About Us"}
+  </h2>
 
-  <section className="bg-[#66B2D6] text-white py-16 font text-center mb-6 drop-shadow-lg rounded-xl">
-    <h2 className="text-3xl font-bold text-center mb-6 drop-shadow-lg ">{locale === "es" ? "¿Por qué elegirnos?" : "Why choose us?"}</h2>
-    <div className="flex flex-col md:flex-row justify-center gap-10 px-4">
-      <div className="max-w-sm">
-        <p className="text-lg font mb-8"> {locale === "es"
-                  ? "🏡 Propiedades seleccionadas por su calidad y diseño."
-                  : "🏡 Properties selected for their quality and design."}</p>
-      </div>
-      <div className="max-w-sm">
-        <p className="text-lg font mb-8"> {locale === "es"
-                  ? "⭐ Atención personalizada con años de experiencia."
-                  : "⭐ Personalized attention with years of experience."}</p>
-      </div>
-      <div className="max-w-sm">
-        <p className="text-lg font mb-8">   {locale === "es"
-                  ? "🔒 Reserva segura y rápida desde nuestra plataforma."
-                  : "🔒 Secure and fast booking from our platform."}</p>
-      </div>
-    </div>
-  </section>
-
-  <section id="about" className="bg-[#66B2D6] py-16 font text-center mb-6 drop-shadow-lg rounded-xl">
-    <h2 className="text-3xl font-bold text-center mb-6 drop-shadow-lg rounded-xl">{locale === "es" ? "Sobre Nosotros" : "About Us"}</h2>
-    <p className="text-lg font mb-8">
-      {locale === "es" ? (
-            <>
-               En <span className="font-semibold">PremiumStays</span> nos especializamos en propiedades exclusivas de Argentina y España.
-               Nuestro objetivo es ofrecer alojamientos seleccionados por su confort, ubicación y diseño.
-              Somos una empresa familiar con años de experiencia en hospitalidad.
-            </>
-           ) : (
-             <>
-              At <span className="font-semibold">PremiumStays</span> we specialize in exclusive properties from Argentina and Spain.
-              Our goal is to offer accommodations selected for their comfort, location, and design.
-              We are a family business with years of experience in hospitality.
-            </>
-           )}
+  <div className="grid md:grid-cols-2 gap-10 max-w-5xl mx-auto">
+    {[
+      {
+        es: {
+          title: "Transparencia y honestidad",
+          desc: "Creemos en la importancia de los pequeños detalles, en la transparencia y en la honestidad a la hora de gestionar cada reserva.",
+        },
+        en: {
+          title: "Transparency and Honesty",
+          desc: "We believe in the importance of small details, transparency, and honesty when managing each booking.",
+        },
+        icon: "💬",
+      },
+      {
+        es: {
+          title: "Atención cercana",
+          desc: "El equipo de alquiler vacacional está siempre disponible para resolver dudas, recomendar actividades y facilitar el proceso de reserva.",
+        },
+        en: {
+          title: "Close Support",
+          desc: "Our vacation rental team is always available to answer questions, suggest activities, and simplify the booking process.",
+        },
+        icon: "📞",
+      },
+      {
+        es: {
+          title: "Compromiso con la calidad",
+          desc: "Nuestras propiedades cumplen con altos estándares de limpieza y puntualidad con los horarios de entrada y salida.",
+        },
+        en: {
+          title: "Commitment to Quality",
+          desc: "Our properties meet high standards of cleanliness and punctuality at check-in and check-out times.",
+        },
+        icon: "🧼",
+      },
+      {
+        es: {
+          title: "Pasión por la hospitalidad",
+          desc: "Somos un equipo apasionado por los viajes, la hospitalidad y el bienestar de quienes buscan un espacio confortable y acogedor donde descansar.",
+        },
+        en: {
+          title: "Passion for Hospitality",
+          desc: "We’re a team passionate about travel, hospitality, and the well-being of those seeking a cozy and comfortable place to rest.",
+        },
+        icon: "🏡",
+      },
+    ].map((item, idx) => (
+      <div key={idx} className="flex gap-4 items-start">
+        <div className="w-10 h-10 min-w-[2.5rem] min-h-[2.5rem] flex items-center justify-center rounded-full bg-white text-[#66B2D6] text-xl shadow-md">
+          {item.icon}
+        </div>
+        <div>
+          <h3 className="text-xl font-bold mb-1 drop-shadow-sm">
+            {locale === "es" ? item.es.title : item.en.title}
+          </h3>
+    <p className="text-base drop-shadow-sm leading-relaxed sm:text-justify max-w-prose">
+      {locale === "es" ? item.es.desc : item.en.desc}
     </p>
-  </section>
+        </div>
+      </div>
+    ))}
+  </div>
+</section>
+
 
   <section id="contact" className="bg-[#66B2D6] py-16 rounded-xl text-white mb-6 drop-shadow-lg">
-    <div className="container mx-auto px-4 max-w-xl text-center">
-      <h2 className="text-3xl font-bold text-center mb-6 drop-shadow-lg">{locale === "es" ? "Contáctanos" : "Contact Us"}</h2>
-      <form onSubmit={handleContactSubmit} className="space-y-4">
-        <input
-          type="text"
-          name="name"
-          placeholder={locale === "es" ? "Nombre" : "Name"}
-          value={form.name}
-          onChange={handleChange}
-          required
-          className="w-full p-3 rounded border border-[#2f2c79] bg-white text-[#2f2c79]"
-        />
-        <input
-          type="email"
-          name="email"
-          placeholder={locale === "es" ? "Correo electrónico" : "Email"}
-          value={form.email}
-          onChange={handleChange}
-          required
-          className="w-full p-3 rounded border border-[#2f2c79] bg-white text-[#2f2c79]"
-        />
-        <textarea
-          name="message"
-          placeholder={locale === "es" ? "Mensaje" : "Message"}
-          rows={4}
-          value={form.message}
-          onChange={handleChange}
-          required
-          className="w-full p-3 rounded border border-[#2f2c79] bg-white text-[#2f2c79]"
-        />
+    <div className="container mx-auto px-4 max-w-2xl text-center">
+      <h2 className="text-3xl md:text-4xl font-bold mb-8 drop-shadow-md">
+        {locale === "es" ? "Contáctanos" : "Contact Us"}
+      </h2>
+
+      <form onSubmit={handleContactSubmit} className="space-y-5 text-left">
+        <div>
+          <label htmlFor="name" className="block mb-1 font-semibold drop-shadow-sm">
+            {locale === "es" ? "Nombre" : "Name"}
+          </label>
+          <input
+            type="text"
+            id="name"
+            name="name"
+            placeholder={locale === "es" ? "Tu nombre" : "Your name"}
+            value={form.name}
+            onChange={handleChange}
+            required
+            className="w-full p-3 rounded-xl border border-[#2f2c79] bg-white text-[#2f2c79] shadow-sm"
+          />
+        </div>
+
+        <div>
+          <label htmlFor="email" className="block mb-1 font-semibold drop-shadow-sm">
+            {locale === "es" ? "Correo electrónico" : "Email"}
+          </label>
+          <input
+            type="email"
+            id="email"
+            name="email"
+            placeholder={locale === "es" ? "Tu correo electrónico" : "Your email"}
+            value={form.email}
+            onChange={handleChange}
+            required
+            className="w-full p-3 rounded-xl border border-[#2f2c79] bg-white text-[#2f2c79] shadow-sm"
+          />
+        </div>
+
+        <div>
+          <label htmlFor="message" className="block mb-1 font-semibold drop-shadow-sm">
+            {locale === "es" ? "Mensaje" : "Message"}
+          </label>
+          <textarea
+            id="message"
+            name="message"
+            placeholder={locale === "es" ? "Escribe tu mensaje..." : "Write your message..."}
+            rows={5}
+            value={form.message}
+            onChange={handleChange}
+            required
+            className="w-full p-3 rounded-xl border border-[#2f2c79] bg-white text-[#2f2c79] shadow-sm"
+          />
+        </div>
+
         <button
           type="submit"
-          className="mt-4 w-full bg-[#1A5E8D] text-[#EAF7FC] py-3 rounded-xl font-medium hover:bg-[#154a72] transition"
+          className="w-full bg-[#1A5E8D] text-[#EAF7FC] py-3 rounded-xl font-semibold hover:bg-[#154a72] transition shadow-md"
         >
           {locale === "es" ? "Enviar mensaje" : "Send Message"}
         </button>
       </form>
     </div>
   </section>
-</main>
+  </main>
 
-
-    <footer className="bg-white text-[#2f2c79] py-6 border-t text-center text-sm">
-      © 2025 Propiedades Premium
-    </footer>
   </div>
 );
 
@@ -189,7 +325,7 @@ function PropertyCard({ property, locale }: { property: Property; locale: "es" |
         {property.images.length > 0 && (
           // eslint-disable-next-line @next/next/no-img-element
           <img
-            src={`${process.env.NEXT_PUBLIC_BACKEND_URL}${property.images[0]}`}
+            src={`${process.env.NEXT_PUBLIC_BACKEND_URL?.replace(/\/$/, "")}${property.images[0]}`}
             alt={locale === "es" ? property.title : property.title_en}
             className="w-full h-70 object-cover"
           />

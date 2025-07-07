@@ -27,3 +27,8 @@ uploads/*
 
 # Otros
 coverage/
+
+# Docker
+docker/
+docker-compose.yml
+Dockerfile
