@@ -36,8 +36,8 @@ export default function Home() {
     setForm((prev) => ({ ...prev, [name]: value }));
   };
 
-  const argentina = properties.filter((p) => p.country === "Argentina");
-  //const espana = properties.filter((p) => p.country === "España");
+  const altosDeColon = properties.find((p) => p.order === 0);
+  const altosDeAlsina = properties.find((p) => p.order === 1);
 
 return (
   <div className="min-h-screen flex flex-col bg-[#A8D8E8] text-white drop-shadow-2xl">
@@ -78,29 +78,29 @@ return (
   </div>
 </section>
 
-
-
   <main className="w-full max-w-screen-xl mx-auto px-4 py-8 space-y-16">
 
   <section id="argentina">
-<div className="flex justify-center gap-8 flex-wrap">
-  {argentina.map((p, index) => (
-    <div key={p.id} className="flex flex-col items-center w-full max-w-[600px]">
-      <h2 className="text-2xl sm:text-3xl font-bold text-center mb-4 drop-shadow-lg">
-        {locale === "es"
-          ? index === 0
-            ? "ALTOS DE COLON"
-            : "ALTOS DE ALSINA"
-          : index === 0
-            ? "UPPER COLON"
-            : "UPPER ALSINA"}
-      </h2>
-      <PropertyCard property={p} locale={locale} />
-    </div>
-  ))}
-</div>
+          <div className="flex justify-center gap-8 flex-wrap">
+            {altosDeColon && (
+              <div className="flex flex-col items-center w-full max-w-[600px]">
+                <h2 className="text-2xl sm:text-3xl font-bold text-center mb-4 drop-shadow-lg">
+                  {locale === "es" ? "ALTOS DE COLON" : "UPPER COLON"}
+                </h2>
+                <PropertyCard property={altosDeColon} locale={locale} />
+              </div>
+            )}
 
-  </section>
+            {altosDeAlsina && (
+              <div className="flex flex-col items-center w-full max-w-[600px]">
+                <h2 className="text-2xl sm:text-3xl font-bold text-center mb-4 drop-shadow-lg">
+                  {locale === "es" ? "ALTOS DE ALSINA" : "UPPER ALSINA"}
+                </h2>
+                <PropertyCard property={altosDeAlsina} locale={locale} />
+              </div>
+            )}
+          </div>
+        </section>
 
   <section className="bg-[#66B2D6] text-white py-16 px-4 mb-6 drop-shadow-lg rounded-xl">
     <h2 className="text-3xl md:text-4xl font-bold text-center mb-12 drop-shadow-md">

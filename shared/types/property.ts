@@ -13,6 +13,7 @@ export type Property = {
     price: number;
     description: string;
     description_en: string;
+    order:number;
 
   };
   

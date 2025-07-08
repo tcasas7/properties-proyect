@@ -7,6 +7,13 @@ export class PropertiesService {
   constructor(private prisma: PrismaService) {}
 
   async create(data: CreatePropertyDto) {
+
+    const last = await this.prisma.property.findFirst({
+      orderBy: { order: 'desc' },
+    });
+
+    const newOrder = last ? last.order + 1 : 0;
+
     return this.prisma.property.create({
       data: {
         title: data.title,
@@ -22,6 +29,7 @@ export class PropertiesService {
         description_en: data.description_en ?? '',
         country: data.country,
         available: data.available ?? true,
+        order: newOrder, 
       },
     });
   }
@@ -41,7 +49,7 @@ export class PropertiesService {
       description: data.description ?? "",
       description_en: data.description_en ?? '',
       available: data.available,
-      
+      order: data.order,
     },
   });
 }

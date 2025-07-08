@@ -48,5 +48,10 @@ export class CreatePropertyDto {
   @IsString()
   description_en?: string;
 
+  @IsOptional()
+  @IsNumber()
+  order?: number;
+
+
 }
 

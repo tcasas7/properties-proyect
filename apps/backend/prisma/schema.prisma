@@ -22,6 +22,7 @@ model Property {
   price     Float 
   description String     @default("")
   description_en String?
+  order          Int        @default(0)
   calendar  Calendar[]
   bookings Booking[]
 }

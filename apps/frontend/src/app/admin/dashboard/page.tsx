@@ -50,6 +50,7 @@ export default function Dashboard() {
     description_en: '',
     country: '',
     address: '',
+    order: 0,
   });
   const [files, setFiles] = useState<FileList | null>(null);
   const imageInputRefs = useRef<{ [key: string]: HTMLInputElement | null }>({});
@@ -129,6 +130,8 @@ useEffect(() => {
     formData.append('description', form.description);
     formData.append('description_en', form.description_en);
     formData.append('country', form.country);
+    formData.append('order', String(form.order));
+
 
 
     if (files) {
@@ -140,7 +143,7 @@ useEffect(() => {
     try {
       await api.post('/properties', formData);
       toast.success('Propiedad creada con éxito');
-      setForm({ title: '', subtitle: '', location: '', price: 0, description: '', country: '', latitude: 0, longitude: 0, title_en: '', subtitle_en: '', description_en: '', address: '' });
+      setForm({ title: '', subtitle: '', location: '', price: 0, description: '', country: '', latitude: 0, longitude: 0, title_en: '', subtitle_en: '', description_en: '', address: '', order: 0});
       setFiles(null);
       fetchProperties();
     } catch (err) {
@@ -247,17 +250,14 @@ useEffect(() => {
           rows={6}
         />
         <select
-          name="country"
-          value={form.country}
+          name="order"
+          value={form.order}
           onChange={handleChange}
-          className="w-full p-2 border border-[#1A5E8D]/30 rounded bg-white text-[#1A5E8D] focus:ring-[#1A5E8D] focus:border-[#1A5E8D] appearance-none"
-          required
+          className="w-full p-2 border border-[#1A5E8D]/30 rounded bg-white text-[#1A5E8D] focus:ring-[#1A5E8D] focus:border-[#1A5E8D]"
         >
-          <option value="">Seleccioná un país</option>
-          <option value="Argentina">Argentina</option>
-          <option value="España">España</option>
+          <option value={0}>Altos de Colón</option>
+          <option value={1}>Altos de Alsina</option>
         </select>
-
         <input
           name="location"
           value={form.location}
@@ -344,6 +344,21 @@ useEffect(() => {
                     className="w-full p-2 border border-[#1A5E8D]/30 rounded focus:ring-[#1A5E8D] focus:border-[#1A5E8D]"
                     rows={8}
                   />
+                  <select
+                    name="order"
+                    value={editForm.order ?? 0}
+                    onChange={(e) => {
+                      const value = e.target.value;
+                      setEditForm((prev) => ({
+                        ...prev,
+                        order: Number(value),
+                      }));
+                    }}
+                    className="w-full p-2 border border-[#1A5E8D]/30 rounded bg-white text-[#1A5E8D] focus:ring-[#1A5E8D] focus:border-[#1A5E8D]"
+                  >
+                    <option value={0}>Altos de Colón</option>
+                    <option value={1}>Altos de Alsina</option>
+                  </select>
                   <input
                     type="file"
                     accept="image/*"
