@@ -12,6 +12,7 @@ import Link from 'next/link';
 import { confirmDialog } from '@/components/ConfrimDialog';
 import { jwtDecode }  from 'jwt-decode';
 import { geocodeAddress } from '@/lib/geocode';
+import { uploadToCloudinary } from '@/lib/uploadToCloudinary';
 
 function isTokenExpired(token: string): boolean {
   try {
@@ -20,18 +21,6 @@ function isTokenExpired(token: string): boolean {
     return decoded.exp < now;
   } catch {
     return true;
-  }
-}
-
-class FileListProxy {
-  constructor(private files: File[]) {
-    files.forEach((f, i) => (this[i] = f));
-  }
-  length = this.files.length;
-  item = (i: number) => this.files[i];
-  [index: number]: File;
-  [Symbol.iterator]() {
-    return this.files[Symbol.iterator]();
   }
 }
 
@@ -52,7 +41,7 @@ export default function Dashboard() {
     address: '',
     order: 0,
   });
-  const [files, setFiles] = useState<FileList | null>(null);
+  const [files, setFiles] = useState<File[]>([]);
   const imageInputRefs = useRef<{ [key: string]: HTMLInputElement | null }>({});
   const [editingId, setEditingId] = useState<number | null>(null);
   const [editForm, setEditForm] = useState<Partial<Property>>({});
@@ -116,41 +105,57 @@ useEffect(() => {
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  e.preventDefault();
 
-    const formData = new FormData();
-    formData.append('title', form.title);
-    formData.append('title_en', form.title_en);
-    formData.append('subtitle', form.subtitle);
-    formData.append('subtitle_en', form.subtitle_en );
-    formData.append('location', form.location);
-    formData.append('latitude', String(form.latitude));
-    formData.append('longitude', String(form.longitude));
-    formData.append('price', String(form.price));
-    formData.append('description', form.description);
-    formData.append('description_en', form.description_en);
-    formData.append('country', form.country);
-    formData.append('order', String(form.order));
+  try {
+    let uploadedUrls: string[] = [];
 
-
-
-    if (files) {
-      Array.from(files).forEach((file) => {
-        formData.append('images', file);
-      });
+    if (files && files.length > 0) {
+      const uploads = Array.from(files).map((file) => uploadToCloudinary(file));
+      uploadedUrls = await Promise.all(uploads);
     }
 
-    try {
-      await api.post('/properties', formData);
-      toast.success('Propiedad creada con éxito');
-      setForm({ title: '', subtitle: '', location: '', price: 0, description: '', country: '', latitude: 0, longitude: 0, title_en: '', subtitle_en: '', description_en: '', address: '', order: 0});
-      setFiles(null);
-      fetchProperties();
-    } catch (err) {
-      console.error(err);
-      toast.error('Error al crear la propiedad');
-    }
-  };
+    const payload = {
+      title: form.title,
+      title_en: form.title_en,
+      subtitle: form.subtitle,
+      subtitle_en: form.subtitle_en,
+      location: form.location,
+      latitude: form.latitude,
+      longitude: form.longitude,
+      price: form.price,
+      description: form.description,
+      description_en: form.description_en,
+      country: form.country,
+      order: form.order,
+      images: uploadedUrls,
+    };
+
+    await api.post('/properties', payload);
+
+    toast.success('Propiedad creada con éxito');
+    setForm({
+      title: '',
+      subtitle: '',
+      location: '',
+      price: 0,
+      description: '',
+      country: '',
+      latitude: 0,
+      longitude: 0,
+      title_en: '',
+      subtitle_en: '',
+      description_en: '',
+      address: '',
+      order: 0,
+    });
+    setFiles([]);
+    fetchProperties();
+  } catch (err) {
+    console.error(err);
+    toast.error('Error al crear la propiedad');
+  }
+};
     
   const handleLogout = () => {
   localStorage.removeItem('token');
@@ -265,23 +270,32 @@ useEffect(() => {
           placeholder="Ubicación / Dirección"
           className="w-full p-2 border border-[#1A5E8D]/30 rounded focus:ring-[#1A5E8D] focus:border-[#1A5E8D]"
         />
-
         <div className="space-y-2">
           <label className="block font-semibold">Imágenes</label>
-          {Array.from(files || []).map((file, i) => (
+
+          {files.map((file, i) => (
             <div key={i} className="flex items-center gap-4">
-              <span className="text-sm">{file.name}</span>
-              <button type="button" onClick={() => {
-                const newFiles = Array.from(files!);
-                newFiles.splice(i, 1);
-                setFiles(new FileListProxy(newFiles));
-              }} className="text-red-500 text-sm hover:underline">Quitar</button>
+              <span className="text-sm text-ellipsis overflow-hidden">{file.name}</span>
+              <button
+                type="button"
+                onClick={() => setFiles(files.filter((_, idx) => idx !== i))}
+                className="text-red-500 text-sm hover:underline"
+              >
+                Quitar
+              </button>
             </div>
           ))}
-          <input type="file" accept="image/*" onChange={(e) => {
-            const file = e.target.files?.[0];
-            if (file) setFiles(new FileListProxy([...(files ? Array.from(files) : []), file]));
-          }} className="w-full p-2 border border-[#1A5E8D]/30 rounded focus:ring-[#1A5E8D] focus:border-[#1A5E8D]" />
+
+          <input
+            type="file"
+            accept="image/*"
+            onChange={(e) => {
+              const file = e.target.files?.[0];
+              if (!file) return;
+              setFiles((prev) => [...prev, file]);
+            }}
+            className="w-full p-2 border border-[#1A5E8D]/30 rounded focus:ring-[#1A5E8D] focus:border-[#1A5E8D]"
+          />
         </div>
         <button
           type="submit"
@@ -366,13 +380,10 @@ useEffect(() => {
                     onChange={async (e) => {
                       const newFiles = e.target.files;
                       if (!newFiles?.length) return;
-
-                      const formData = new FormData();
-                      Array.from(newFiles).forEach((file) => formData.append('images', file));
-
                       try {
-                        toast.loading('Agregando imagenes...');
-                        await api.patch(`/properties/${p.id}/add-images`, formData);
+                        toast.loading('Subiendo imágenes...');
+                        const urls = await Promise.all(Array.from(newFiles).map(uploadToCloudinary));
+                        await api.patch(`/properties/${p.id}/add-images`, { images: urls });
                         toast.dismiss();
                         toast.success('Imágenes agregadas');
                         fetchProperties();
@@ -497,7 +508,7 @@ useEffect(() => {
               {p.images.map((imgUrl, idx) => (
                 <div key={idx} className="relative group">
                   <img
-                    src={`${process.env.NEXT_PUBLIC_BACKEND_URL?.replace(/\/$/, "")}${imgUrl}`}
+                    src={imgUrl}
                     alt={`imagen-${idx}`}
                     className="w-32 h-24 object-cover rounded cursor-pointer"
                     onClick={() => imageInputRefs.current[`${p.id}-${idx}`]?.click()}
@@ -508,21 +519,20 @@ useEffect(() => {
                     className="hidden"
                     ref={(el) => { imageInputRefs.current[`${p.id}-${idx}`] = el; }}
                     onChange={async (e) => {
-                      const newImage = e.target.files?.[0];
-                      if (!newImage) return;
-                      const formData = new FormData();
-                      formData.append('image', newImage);
-                      try {
-                        toast.loading('Actualizando imagen...');
-                        await api.patch(`/properties/${p.id}/replace-image/${idx}`, formData);
-                        toast.dismiss();
-                        toast.success('Imagen actualizada');
-                        fetchProperties();
-                      } catch {
-                        toast.dismiss();
-                        toast.error('Error al actualizar imagen');
-                      }
-                    }}
+                    const newImage = e.target.files?.[0];
+                    if (!newImage) return;
+                    try {
+                      toast.loading('Subiendo imagen...');
+                      const url = await uploadToCloudinary(newImage);
+                      await api.patch(`/properties/${p.id}/replace-image/${idx}`, { image: url });
+                      toast.dismiss();
+                      toast.success('Imagen actualizada');
+                      fetchProperties();
+                    } catch {
+                      toast.dismiss();
+                      toast.error('Error al actualizar imagen');
+                    }
+                  }}
                   />
                 </div>
               ))}

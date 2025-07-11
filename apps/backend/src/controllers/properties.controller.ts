@@ -22,92 +22,70 @@ import { extname } from 'path';
 import { Express } from 'express';
 import { CreateCalendarDto } from 'src/dtos/calendar.dto';
 import { title } from 'process';
+import { CloudinaryService } from 'src/cloudinary/cloudinary,service';
 
 
 @Controller('properties')
 export class PropertiesController {
-  constructor(private readonly propertiesService: PropertiesService) {}
+  constructor(private readonly propertiesService: PropertiesService, private readonly cloudinaryService: CloudinaryService) {}
 
-  @Post()
-  @UseGuards(JwtAuthGuard)
-  @UseInterceptors(FileFieldsInterceptor([{ name: 'images', maxCount: 10 }], {
-    storage: diskStorage({
-      destination: './uploads',
-      filename: (req, file, cb) => {
-        const unique = Date.now() + '-' + Math.round(Math.random() * 1e9);
-        cb(null, unique + extname(file.originalname));
-      },
-    }),
-  }))
+@Post()
+@UseGuards(JwtAuthGuard)
+async create(@Body() body: any) {
+  const urls = body.images || [];
 
-  async create(
-    @Body() body: any,
-    @UploadedFiles() files: { images?: Express.Multer.File[] },
-  ) {
-    const imagePaths = files.images?.map(file => `/uploads/${file.filename}`) || [];
-    const propertyData = {
-      title: body.title,
-      titleEn: body.title_en,
-      subtitle: body.subtitle ?? '',
-      subtitleEn: body.subtitle_en ?? '',
-      location: body.location,
-      latitude: body.latitude ? Number(body.latitude) : undefined,
-      longitude: body.longitude ? Number(body.longitude) : undefined,
-      price: Number(body.price),
-      description: body.description ?? '',
-      descriptionEn: body.description_en ?? '',
-      country: body.country, 
-      images: imagePaths,
-      available: true,
-    };
-    
-    if (!propertyData.latitude || !propertyData.longitude) {
-      const { lat, lng } = await this.propertiesService.geocodeAddress(propertyData.location);
-      propertyData.latitude = lat;
-      propertyData.longitude = lng;
+  const propertyData = {
+    title: body.title,
+    title_en: body.title_en,
+    subtitle: body.subtitle ?? '',
+    subtitle_en: body.subtitle_en ?? '',
+    location: body.location,
+    latitude: body.latitude ? Number(body.latitude) : undefined,
+    longitude: body.longitude ? Number(body.longitude) : undefined,
+    price: Number(body.price),
+    description: body.description ?? '',
+    description_en: body.description_en ?? '',
+    country: body.country,
+    images: urls,
+    available: true,
+    order: body.order ?? 0,
+  };
+
+  if (!propertyData.latitude || !propertyData.longitude) {
+    const { lat, lng } = await this.propertiesService.geocodeAddress(propertyData.location);
+    propertyData.latitude = lat;
+    propertyData.longitude = lng;
+  }
+
+  return this.propertiesService.create(propertyData);
 }
 
-    return this.propertiesService.create(propertyData);
+ @Patch(':id/replace-image/:index')
+@UseGuards(JwtAuthGuard)
+async replaceImage(
+  @Param('id', ParseIntPipe) id: number,
+  @Param('index', ParseIntPipe) index: number,
+  @Body() body: { image: string }, 
+) {
+  if (!body.image) {
+    throw new HttpException('Debe enviar una URL de imagen', HttpStatus.BAD_REQUEST);
   }
 
-  @Patch(':id/replace-image/:index')
-  @UseGuards(JwtAuthGuard)
-  @UseInterceptors(FileFieldsInterceptor([{ name: 'image', maxCount: 1 }], {
-    storage: diskStorage({
-      destination: './uploads',
-      filename: (req, file, cb) => {
-        const unique = Date.now() + '-' + Math.round(Math.random() * 1e9);
-        cb(null, unique + extname(file.originalname));
-      },
-    }),
-  }))
+  return this.propertiesService.replaceImage(id, index, body.image);
+}
 
-  async replaceImage(
-    @Param('id', ParseIntPipe) id: number,
-    @Param('index', ParseIntPipe) index: number,
-    @UploadedFiles() files: { image?: Express.Multer.File[] },
-  ) {
-    const imagePath = `/uploads/${files.image?.[0].filename}`;
-    return this.propertiesService.replaceImage(id, index, imagePath);
-  }
 
   @Patch(':id/add-images')
   @UseGuards(JwtAuthGuard)
-  @UseInterceptors(FileFieldsInterceptor([{ name: 'images', maxCount: 10 }], {
-    storage: diskStorage({
-      destination: './uploads',
-      filename: (req, file, cb) => {
-        const unique = Date.now() + '-' + Math.round(Math.random() * 1e9);
-        cb(null, unique + extname(file.originalname));
-      },
-    }),
-  }))
   async addImages(
     @Param('id', ParseIntPipe) id: number,
-    @UploadedFiles() files: { images?: Express.Multer.File[] },
+    @Body() body: { images: string[] },
   ) {
-    const paths = files.images?.map(file => `/uploads/${file.filename}`) || [];
-    return this.propertiesService.addImages(id, paths);
+    if (!Array.isArray(body.images)) {
+      throw new HttpException('Debe enviar un array de imágenes', HttpStatus.BAD_REQUEST);
+    }
+
+    return this.propertiesService.addImages(id, body.images);
   }
 
   

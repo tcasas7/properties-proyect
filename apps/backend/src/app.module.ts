@@ -8,6 +8,7 @@ import { AuthController } from './controllers/auth.controller';
 import { AuthService } from './services/auth.service';
 import { JwtModule } from '@nestjs/jwt';
 import { JwtStrategy } from './common/strategies/jwt.strategy';
+import { CloudinaryService } from './cloudinary/cloudinary,service';
 
 @Module({
   imports: [
@@ -23,6 +24,7 @@ import { JwtStrategy } from './common/strategies/jwt.strategy';
     PrismaService,
     AuthService,
     JwtStrategy,
+    CloudinaryService
   ],
 })
 export class AppModule {}

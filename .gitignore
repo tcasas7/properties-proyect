@@ -24,6 +24,8 @@ Thumbs.db
 # Carpeta de imágenes subidas (pero no su estructura)
 uploads/*
 !uploads/.gitkeep
+apps/backend/uploads/
+
 
 # Otros
 coverage/

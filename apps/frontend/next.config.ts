@@ -10,11 +10,19 @@ const nextConfig: NextConfig = {
             protocol: "https",
             hostname: "**.devtunnels.ms",
           },
+          {
+            protocol: "https",
+            hostname: "res.cloudinary.com",
+          },
         ]
       : [
           {
             protocol: "https",
-            hostname: "api.premiumstays.com", //dominio real
+            hostname: "res.cloudinary.com",
+          },
+          {
+            protocol: "https",
+            hostname: "api.premiumstays.com", // backend real
             pathname: "/uploads/**",
           },
         ],

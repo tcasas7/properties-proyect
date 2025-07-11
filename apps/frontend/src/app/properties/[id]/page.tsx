@@ -1,3 +1,4 @@
+/* eslint-disable @next/next/no-img-element */
 "use client";
 
 import { useEffect, useState } from "react";
@@ -8,13 +9,17 @@ import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import "keen-slider/keen-slider.min.css";
 import { useKeenSlider } from "keen-slider/react";
-import { ChevronLeft, ChevronRight, X, ArrowLeft } from "lucide-react";
+import { X, ArrowLeft } from "lucide-react";
 import "react-datepicker/dist/react-datepicker.css";
 import { Calendar } from "../../../../../../shared/types/calendar";
 import { differenceInCalendarDays } from "date-fns";
 import BookingCard from "@/components/BookingCard";
 import { useLocale } from "@/context/LanguageContext";
 import propertyTranslations from "@/translations/property";
+import Slider from "react-slick";
+import "slick-carousel/slick/slick.css";
+import "slick-carousel/slick/slick-theme.css";
+
 
 
 export default function PropertyPage() {
@@ -26,10 +31,16 @@ export default function PropertyPage() {
   const [endDate, setEndDate] = useState<Date | null>(null);
   const [galleryOpen, setGalleryOpen] = useState(false);
   const [selectedIndex, setSelectedIndex] = useState(0);
-  const [sliderRef, instanceRef] = useKeenSlider<HTMLDivElement>({
-    loop: true,
-    slideChanged: (s) => setSelectedIndex(s.track.details.rel),
-  });
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const [sliderRef, instanceRef] = useKeenSlider<HTMLDivElement>(
+    galleryOpen
+      ? {
+          loop: true,
+          slideChanged: (s) => setSelectedIndex(s.track.details.rel),
+        }
+      : undefined
+  );
+
   const { locale } = useLocale();
   const t = propertyTranslations[locale];
 
@@ -46,10 +57,10 @@ export default function PropertyPage() {
   }, [id]);
 
   useEffect(() => {
-    if (galleryOpen && instanceRef.current) {
-      instanceRef.current.moveToIdx(selectedIndex, true); 
-    }
-  }, [galleryOpen, instanceRef, selectedIndex]);
+  if (galleryOpen && instanceRef.current) {
+    instanceRef.current.moveToIdx(selectedIndex);
+  }
+}, [galleryOpen, instanceRef, selectedIndex]);
 
 
   useEffect(() => {
@@ -105,7 +116,6 @@ export default function PropertyPage() {
             {locale === "es" ? property.subtitle : property.subtitle_en}
           </p>
         </div>
-
         <div className="grid grid-cols-1 md:grid-cols-3s gap-8">
           <div className="md:col-span-2 space-y-4">
             <div
@@ -116,7 +126,7 @@ export default function PropertyPage() {
               }}
             >
               <Image
-                src={`${process.env.NEXT_PUBLIC_BACKEND_URL?.replace(/\/$/, "")}${property.images[0]}`}
+                src={property.images[0]}
                 alt={property.title}
                 key={galleryOpen ? `open-${selectedIndex}` : "closed"}
                 width={1200}
@@ -130,7 +140,7 @@ export default function PropertyPage() {
                 {property.images.map((img, i) => (
                   <Image
                     key={i}
-                    src={`${process.env.NEXT_PUBLIC_BACKEND_URL?.replace(/\/$/, "")}${img}`}
+                    src={img}
                     alt={`img-${i}`}
                     width={120}
                     height={80}
@@ -144,6 +154,7 @@ export default function PropertyPage() {
               </div>
             )}
           </div>
+
 
           <div className="flex flex-col justify-between space-y-6 p-6 bg-white rounded-2xl shadow-md border">
             <div>
@@ -218,46 +229,36 @@ export default function PropertyPage() {
       </main>
 
       {galleryOpen && (
-        <div className="fixed inset-0 bg-black z-50 flex items-center justify-center">
-          <button
-            className="absolute top-4 right-4 text-white z-50"
-            onClick={() => setGalleryOpen(false)}
-          >
-            <X size={32} />
-          </button>
+  <div className="fixed inset-0 bg-black z-50 flex flex-col items-center justify-center">
+    <button
+      className="absolute top-4 right-4 text-white z-50"
+      onClick={() => setGalleryOpen(false)}
+    >
+      <X size={32} />
+    </button>
 
-          <button
-            onClick={() => instanceRef.current?.prev()}
-            className="absolute left-4 top-1/2 -translate-y-1/2 z-50 text-white bg-black/40 hover:bg-black/60 p-2 rounded-full"
-          >
-            <ChevronLeft size={32} />
-          </button>
-          <button
-            onClick={() => instanceRef.current?.next()}
-            className="absolute right-4 top-1/2 -translate-y-1/2 z-50 text-white bg-black/40 hover:bg-black/60 p-2 rounded-full"
-          >
-            <ChevronRight size={32} />
-          </button>
-
-          <div ref={sliderRef} className="keen-slider w-full h-full">
-            {property.images.map((img, i) => (
-              <div
-                className="keen-slider__slide flex items-center justify-center w-full h-full"
-                key={i}
-              >
-                <div className="relative w-full h-full">
-                  <Image
-                    src={`${process.env.NEXT_PUBLIC_BACKEND_URL?.replace(/\/$/, "")}${img}`}
-                    alt={`img-${i}`}
-                    fill
-                    className="object-contain"
-                  />
-                </div>
-              </div>
-            ))}
+    <div className="w-full max-w-7xl px-1">
+      <Slider
+        initialSlide={selectedIndex}
+        infinite
+        speed={500}
+        slidesToShow={1}
+        slidesToScroll={1}
+        afterChange={(index) => setSelectedIndex(index)}
+      >
+        {property.images.map((img, i) => (
+          <div key={i} className="flex items-center justify-center h-[80vh]">
+            <img
+              src={img}
+              alt={`img-${i}`}
+              className="object-contain max-h-full w-auto mx-auto"
+            />
           </div>
-        </div>
-      )}
+        ))}
+      </Slider>
+    </div>
+  </div>
+)}
     </div>
   );
 }

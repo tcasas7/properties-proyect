@@ -325,7 +325,7 @@ function PropertyCard({ property, locale }: { property: Property; locale: "es" |
         {property.images.length > 0 && (
           // eslint-disable-next-line @next/next/no-img-element
           <img
-            src={`${process.env.NEXT_PUBLIC_BACKEND_URL?.replace(/\/$/, "")}${property.images[0]}`}
+            src={property.images[0]}
             alt={locale === "es" ? property.title : property.title_en}
             className="w-full h-70 object-cover"
           />
