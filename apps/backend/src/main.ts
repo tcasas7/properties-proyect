@@ -14,7 +14,7 @@ async function bootstrap() {
 
   app.enableCors({
     //origin: 'http://localhost:3000',
-    origin: 'https://5d4lf267-3000.brs.devtunnels.ms',
+    origin: 'https://properties-proyect.vercel.app',
     credentials: true,
   });
 
