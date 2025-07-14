@@ -78,7 +78,7 @@ export default function PropertyPage() {
 
   const handleBooking = () => {
     if (!startDate || !endDate) return;
-    const url = `https://wa.me/5492233005228?text=${encodeURIComponent(
+    const url = `https://wa.me/+5492235247372?text=${encodeURIComponent(
       `Hola! Quiero reservar:\n\nPropiedad: ${property.title}\nUbicación: ${property.location}\nDesde: ${startDate.toLocaleDateString()}\nHasta: ${endDate.toLocaleDateString()}\nTotal (${totalNights} noches): $${totalPrice}`
     )}`;
     window.open(url, "_blank");

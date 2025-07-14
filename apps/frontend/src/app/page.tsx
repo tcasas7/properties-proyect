@@ -24,7 +24,7 @@ export default function Home() {
     e.preventDefault();
     const { name, email, message } = form;
 
-    const url = `https://wa.me/5492233005228?text=${encodeURIComponent(
+    const url = `https://wa.me/+5492235247372?text=${encodeURIComponent(
       `¡Hola! \n\nQuiero hacer una consulta:\n\nNombre: ${name}\nEmail: ${email}\nMensaje: ${message}`
     )}`;
 
