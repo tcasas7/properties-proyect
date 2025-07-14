@@ -12,11 +12,13 @@ import { join } from 'path';
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
 
-  app.enableCors({
-    //origin: 'http://localhost:3000',
-    origin: 'https://properties-proyect.vercel.app',
-    credentials: true,
-  });
+ app.enableCors({
+  origin: [
+    'http://localhost:3000',
+    'https://properties-proyect.vercel.app',
+  ],
+  credentials: true,
+});
 
   app.useGlobalPipes(new ValidationPipe());
 

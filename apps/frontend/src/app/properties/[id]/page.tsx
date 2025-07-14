@@ -9,16 +9,16 @@ import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import "keen-slider/keen-slider.min.css";
 import { useKeenSlider } from "keen-slider/react";
-import { X, ArrowLeft } from "lucide-react";
+import { ArrowLeft } from "lucide-react";
 import "react-datepicker/dist/react-datepicker.css";
 import { Calendar } from "../../../../../../shared/types/calendar";
 import { differenceInCalendarDays } from "date-fns";
 import BookingCard from "@/components/BookingCard";
 import { useLocale } from "@/context/LanguageContext";
 import propertyTranslations from "@/translations/property";
-import Slider from "react-slick";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
+import GalleryModal from "@/components/GalleryModal";
 
 
 
@@ -118,22 +118,22 @@ export default function PropertyPage() {
         </div>
         <div className="grid grid-cols-1 md:grid-cols-3s gap-8">
           <div className="md:col-span-2 space-y-4">
-            <div
-              className="aspect-video rounded-2xl overflow-hidden shadow-lg cursor-pointer"
-              onClick={() => {
-                setSelectedIndex(0);
-                setGalleryOpen(true);
-              }}
-            >
-              <Image
-                src={property.images[0]}
-                alt={property.title}
-                key={galleryOpen ? `open-${selectedIndex}` : "closed"}
-                width={1200}
-                height={800}
-                className="w-full h-full object-cover"
-              />
-            </div>
+<div
+  className="relative aspect-video rounded-2xl overflow-hidden shadow-lg cursor-pointer"
+  onClick={() => {
+    setSelectedIndex(0);
+    setGalleryOpen(true);
+  }}
+>
+  <Image
+    src={property.images[0]}
+    alt={property.title}
+    key={galleryOpen ? `open-${selectedIndex}` : "closed"}
+    fill
+    className="object-cover"
+    priority
+  />
+</div>
 
             {property.images.length > 1 && (
               <div className="flex gap-2 flex-wrap">
@@ -228,36 +228,13 @@ export default function PropertyPage() {
 
       </main>
 
-      {galleryOpen && (
-  <div className="fixed inset-0 bg-black z-50 flex flex-col items-center justify-center">
-    <button
-      className="absolute top-4 right-4 text-white z-50"
-      onClick={() => setGalleryOpen(false)}
-    >
-      <X size={32} />
-    </button>
-
-    <div className="w-full max-w-7xl px-1">
-      <Slider
-        initialSlide={selectedIndex}
-        infinite
-        speed={500}
-        slidesToShow={1}
-        slidesToScroll={1}
-        afterChange={(index) => setSelectedIndex(index)}
-      >
-        {property.images.map((img, i) => (
-          <div key={i} className="flex items-center justify-center h-[80vh]">
-            <img
-              src={img}
-              alt={`img-${i}`}
-              className="object-contain max-h-full w-auto mx-auto"
-            />
-          </div>
-        ))}
-      </Slider>
-    </div>
-  </div>
+  {galleryOpen && property.images.length > 0 && (
+  <GalleryModal
+    images={property.images}
+    selectedIndex={selectedIndex}
+    onClose={() => setGalleryOpen(false)}
+    onNavigate={(index) => setSelectedIndex(index)}
+  />
 )}
     </div>
   );
