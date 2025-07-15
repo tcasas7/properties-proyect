@@ -58,7 +58,7 @@ return (
     <h1 className="text-2xl md:text-5xl font-bold text-white drop-shadow-2xl mb-3 tracking-normal leading-snug">
       {locale === "es"
         ? "Encuentra tu próxima estadía en Mar del Plata"
-        : "Find your next luxury stay"}
+        : "Find your next stay in Mar del Plata"}
     </h1>
 
     <p className="text-base md:text-4xl text-white/90 drop-shadow-2xl mb-4">
