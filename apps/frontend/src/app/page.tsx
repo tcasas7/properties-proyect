@@ -64,7 +64,7 @@ return (
     <p className="text-base md:text-4xl text-white/90 drop-shadow-2xl mb-4">
       {locale === "es"
         ? "PROPIEDADES ZONA CENTRO - GUEMES"
-        : "Selected properties in Mar del Plata"}
+        : "Properties - Downtown & Güemes Area"}
     </p>
 
     <button
