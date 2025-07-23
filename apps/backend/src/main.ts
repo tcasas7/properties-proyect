@@ -16,6 +16,7 @@ async function bootstrap() {
   origin: [
     'http://localhost:3000',
     'https://properties-proyect.vercel.app',
+    'https://altos-alojamientos.com',
   ],
   credentials: true,
 });
