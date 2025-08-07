@@ -25,6 +25,7 @@ model Property {
   order          Int        @default(0)
   calendar  Calendar[]
   bookings Booking[]
+  seasonalPrices SeasonalPrice[]
 }
 
 model Calendar {
@@ -55,4 +56,13 @@ model Booking {
   email       String
   phone       String
   createdAt   DateTime  @default(now())
+}
+
+model SeasonalPrice {
+  id         Int       @id @default(autoincrement())
+  property   Property  @relation(fields: [propertyId], references: [id])
+  propertyId Int
+  startDate  DateTime
+  endDate    DateTime
+  price      Float
 }

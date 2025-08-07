@@ -23,7 +23,7 @@ import { Express } from 'express';
 import { CreateCalendarDto } from 'src/dtos/calendar.dto';
 import { title } from 'process';
 import { CloudinaryService } from 'src/cloudinary/cloudinary,service';
-
+import { CreateSeasonalPriceDto } from 'src/dtos/seasonal-price.dto';
 
 @Controller('properties')
 export class PropertiesController {
@@ -116,4 +116,34 @@ async replaceImage(
   async remove(@Param('id', ParseIntPipe) id: number) {
     return this.propertiesService.remove(id);
   }
+  
+  @Post(':id/seasonal-prices')
+@UseGuards(JwtAuthGuard)
+addSeasonalPrice(
+  @Param('id', ParseIntPipe) id: number,
+  @Body() dto: CreateSeasonalPriceDto,
+) {
+  return this.propertiesService.addSeasonalPrice(id, dto);
+}
+
+@Get(':id/seasonal-prices')
+getSeasonalPrices(@Param('id', ParseIntPipe) id: number) {
+  return this.propertiesService.getSeasonalPrices(id);
+}
+
+@Delete(':propertyId/seasonal-prices/:priceId')
+@UseGuards(JwtAuthGuard)
+deleteSeasonalPrice(@Param('priceId', ParseIntPipe) priceId: number) {
+  return this.propertiesService.deleteSeasonalPrice(priceId);
+}
+
+@Put(':propertyId/seasonal-prices/:priceId')
+@UseGuards(JwtAuthGuard)
+updateSeasonalPrice(
+  @Param('priceId', ParseIntPipe) priceId: number,
+  @Body() dto: CreateSeasonalPriceDto
+) {
+  return this.propertiesService.updateSeasonalPrice(priceId, dto);
+}
+
 }

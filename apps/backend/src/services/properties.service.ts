@@ -1,6 +1,7 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { CreatePropertyDto } from '../dtos/property.dto';
+import { CreateSeasonalPriceDto } from 'src/dtos/seasonal-price.dto';
 
 @Injectable()
 export class PropertiesService {
@@ -112,5 +113,50 @@ export class PropertiesService {
     lng: parseFloat(data[0].lon),
   };
 }
+
+async addSeasonalPrice(propertyId: number, dto: CreateSeasonalPriceDto) {
+  return this.prisma.seasonalPrice.create({
+    data: {
+      propertyId,
+      startDate: new Date(dto.startDate),
+      endDate: new Date(dto.endDate),
+      price: dto.price,
+    },
+  });
+}
+
+async getSeasonalPrices(propertyId: number) {
+  return this.prisma.seasonalPrice.findMany({
+    where: { propertyId },
+    orderBy: { startDate: 'asc' },
+  });
+}
+
+async deleteSeasonalPrice(priceId: number) {
+  const found = await this.prisma.seasonalPrice.findUnique({
+    where: { id: priceId },
+  });
+
+  if (!found) {
+    throw new NotFoundException('Precio personalizado no encontrado');
+  }
+
+  return this.prisma.seasonalPrice.delete({
+    where: { id: priceId },
+  });
+}
+
+
+async updateSeasonalPrice(priceId: number, dto: CreateSeasonalPriceDto) {
+  return this.prisma.seasonalPrice.update({
+    where: { id: priceId },
+    data: {
+      startDate: new Date(dto.startDate),
+      endDate: new Date(dto.endDate),
+      price: dto.price,
+    },
+  });
+}
+
 
 }
