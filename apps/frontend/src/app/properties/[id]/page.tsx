@@ -273,7 +273,7 @@ export default function PropertyPage() {
               </div>
 
               {/* Botón */}
-              <Button disabled={!startDate || !endDate} onClick={handleBooking} className="...">
+              <Button disabled={!startDate || !endDate} onClick={handleBooking} className="mt-5 w-full bg-[#1A5E8D] text-[#EAF7FC] py-6 text-xl rounded-2xl font-semibold hover:bg-[#154a72] transition-all duration-200">
                 {t.bookWhatsApp}
               </Button>
             </div>
